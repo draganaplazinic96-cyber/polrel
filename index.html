@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>Checklist pitanja</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#181b22;
+    --border:#2a2f3a;
+    --accent:#6ee7b7;
+    --accent-dim:#2f6f5a;
+    --text:#e7e9ee;
+    --muted:#8a90a0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:24px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  h1{
+    font-size:20px;
+    margin:0 0 4px;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:20px;
+  }
+  .overall{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .overall .num{
+    font-size:22px;
+    font-weight:700;
+    color:var(--accent);
+  }
+  .block{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .block-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .block-title{
+    font-weight:600;
+    font-size:15px;
+  }
+  .block-time{
+    font-size:13px;
+    color:var(--accent);
+    font-weight:600;
+    background:rgba(110,231,183,0.08);
+    padding:3px 10px;
+    border-radius:999px;
+    border:1px solid var(--accent-dim);
+  }
+  .block-progress{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .bar{
+    height:5px;
+    background:#242833;
+    border-radius:3px;
+    overflow:hidden;
+    margin-bottom:12px;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--accent);
+    width:0%;
+    transition:width .2s ease;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(46px,1fr));
+    gap:6px;
+  }
+  .item{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:38px;
+    border-radius:8px;
+    background:#1f232c;
+    border:1px solid var(--border);
+    cursor:pointer;
+    font-size:13px;
+    user-select:none;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .item:hover{
+    border-color:var(--accent-dim);
+  }
+  .item.checked{
+    background:var(--accent);
+    color:#0f1115;
+    font-weight:700;
+    border-color:var(--accent);
+    text-decoration:line-through;
+  }
+  .reset-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .reset-btn:hover{
+    border-color:#c0392b;
+    color:#e07a6f;
+  }
+  .pause{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:10px 0 14px;
+    color:var(--muted);
+    font-size:12px;
+    cursor:pointer;
+  }
+  .pause::before, .pause::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+  .pause span{
+    white-space:nowrap;
+    background:rgba(255,255,255,0.03);
+    border:1px dashed var(--border);
+    padding:3px 10px;
+    border-radius:999px;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .pause:hover span{
+    border-color:var(--accent-dim);
+  }
+  .pause.checked span{
+    background:var(--accent);
+    color:#0f1115;
+    border:1px solid var(--accent);
+    border-style:solid;
+    font-weight:700;
+    text-decoration:line-through;
+  }
+</style>
+</head>
+<body>
+
+<h1>Checklist pitanja</h1>
+<div class="sub">Klikni na broj da ga označiš kao završen</div>
+
+<div class="overall">
+  <div>
+    <div style="font-size:12px;color:var(--muted);">Ukupan napredak</div>
+    <div class="num" id="overallCount">0 / 0</div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">Resetuj sve</button>
+</div>
+
+<div id="blocks"></div>
+
+<script>
+const blocks = [
+  { label: "1–18",    from: 1,   to: 18,  time: "1 h" },
+  { label: "69–75",   from: 69,  to: 75,  time: "45 min" },
+  { label: "76–82",   from: 76,  to: 82,  time: "45 min" },
+  { label: "83–89",   from: 83,  to: 89,  time: "45 min" },
+  { label: "90–95",   from: 90,  to: 95,  time: "45 min" },
+  { label: "96–100",  from: 96,  to: 100, time: "1 h" },
+  { label: "101–105", from: 101, to: 105, time: "1 h" },
+  { label: "106–109", from: 106, to: 109, time: "1 h" },
+  { label: "110–113", from: 110, to: 113, time: "1 h" },
+];
+
+let state = {}; // { "1": true, "2": false, ... } in-memory only
+
+function totalQuestions(){
+  return blocks.reduce((s,b)=> s + (b.to - b.from + 1), 0);
+}
+
+function render(){
+  const container = document.getElementById('blocks');
+  container.innerHTML = '';
+
+  blocks.forEach((b, bi) => {
+    const nums = [];
+    for(let n=b.from; n<=b.to; n++) nums.push(n);
+    const checkedCount = nums.filter(n => state[n]).length;
+    const pct = Math.round((checkedCount / nums.length) * 100);
+
+    const blockEl = document.createElement('div');
+    blockEl.className = 'block';
+    blockEl.innerHTML = `
+      <div class="block-head">
+        <div class="block-title">Pitanja ${b.label}</div>
+        <div class="block-time">${b.time}</div>
+      </div>
+      <div class="block-progress">${checkedCount} / ${nums.length} završeno</div>
+      <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="grid" id="grid-${bi}"></div>
+    `;
+    container.appendChild(blockEl);
+
+    const grid = blockEl.querySelector(`#grid-${bi}`);
+    nums.forEach(n => {
+      const item = document.createElement('div');
+      item.className = 'item' + (state[n] ? ' checked' : '');
+      item.textContent = n;
+      item.onclick = () => {
+        state[n] = !state[n];
+        render();
+      };
+      grid.appendChild(item);
+    });
+
+    if(bi < blocks.length - 1){
+      const pause = document.createElement('div');
+      pause.className = 'pause' + (state['pause-' + bi] ? ' checked' : '');
+      pause.innerHTML = '<span>pauza 5 min</span>';
+      pause.onclick = () => {
+        state['pause-' + bi] = !state['pause-' + bi];
+        render();
+      };
+      container.appendChild(pause);
+    }
+  });
+
+  const totalChecked = Object.values(state).filter(Boolean).length;
+  document.getElementById('overallCount').textContent = `${totalChecked} / ${totalQuestions()}`;
+}
+
+function resetAll(){
+  state = {};
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

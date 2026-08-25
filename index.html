@@ -21,246 +21,63 @@
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   }
-  h1{
-    font-size:20px;
-    margin:0 0 4px;
-  }
-  .sub{
-    color:var(--muted);
-    font-size:13px;
-    margin-bottom:20px;
-  }
+  h1{ font-size:20px; margin:0 0 4px; }
+  .sub{ color:var(--muted); font-size:13px; margin-bottom:20px; }
   .overall{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:14px 16px;
-    margin-bottom:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    position:sticky;
-    top:12px;
-    z-index:5;
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:14px 16px; margin-bottom:20px; display:flex; justify-content:space-between;
+    align-items:center; position:sticky; top:12px; z-index:5;
   }
-  .overall .num{
-    font-size:22px;
-    font-weight:700;
-    color:var(--accent);
-  }
-  .block{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:14px;
-  }
-  .block-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:10px;
-    flex-wrap:wrap;
-    gap:6px;
-  }
-  .block-title{
-    font-weight:600;
-    font-size:15px;
-  }
+  .overall .num{ font-size:22px; font-weight:700; color:var(--accent); }
+  .block{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:14px; }
+  .block-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+  .block-title{ font-weight:600; font-size:15px; }
   .block-time{
-    font-size:12px;
-    color:var(--accent);
-    font-weight:600;
-    background:rgba(110,231,183,0.08);
-    padding:3px 10px;
-    border-radius:999px;
-    border:1px solid var(--accent-dim);
-    white-space:nowrap;
+    font-size:12px; color:var(--accent); font-weight:600; background:rgba(110,231,183,0.08);
+    padding:3px 10px; border-radius:999px; border:1px solid var(--accent-dim); white-space:nowrap;
   }
-  .block-progress{
-    font-size:12px;
-    color:var(--muted);
-    margin-bottom:10px;
-  }
-  .bar{
-    height:5px;
-    background:#242833;
-    border-radius:3px;
-    overflow:hidden;
-    margin-bottom:12px;
-  }
-  .bar-fill{
-    height:100%;
-    background:var(--accent);
-    width:0%;
-    transition:width .2s ease;
-  }
-
-  /* number grid (used for question ranges) */
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(46px,1fr));
-    gap:6px;
-  }
+  .block-progress{ font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .bar{ height:5px; background:#242833; border-radius:3px; overflow:hidden; margin-bottom:12px; }
+  .bar-fill{ height:100%; background:var(--accent); width:0%; transition:width .2s ease; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(46px,1fr)); gap:6px; }
   .item{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    height:38px;
-    border-radius:8px;
-    background:#1f232c;
-    border:1px solid var(--border);
-    cursor:pointer;
-    font-size:13px;
-    user-select:none;
-    transition:background .12s, border-color .12s, color .12s;
+    display:flex; align-items:center; justify-content:center; height:38px; border-radius:8px;
+    background:#1f232c; border:1px solid var(--border); cursor:pointer; font-size:13px;
+    user-select:none; transition:background .12s, border-color .12s, color .12s;
   }
-  .item:hover{
-    border-color:var(--accent-dim);
-  }
-  .item.checked{
-    background:var(--accent);
-    color:#0f1115;
-    font-weight:700;
-    border-color:var(--accent);
-    text-decoration:line-through;
-  }
-
-  /* named list (used for texts / topics) */
-  .list{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
+  .item:hover{ border-color:var(--accent-dim); }
+  .item.checked{ background:var(--accent); color:#0f1115; font-weight:700; border-color:var(--accent); text-decoration:line-through; }
+  .list{ display:flex; flex-direction:column; gap:6px; }
   .row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    height:auto;
-    min-height:42px;
-    border-radius:8px;
-    background:#1f232c;
-    border:1px solid var(--border);
-    cursor:pointer;
-    font-size:13.5px;
-    user-select:none;
-    padding:8px 12px;
-    transition:background .12s, border-color .12s, color .12s;
+    display:flex; align-items:center; justify-content:space-between; gap:10px; height:auto; min-height:42px;
+    border-radius:8px; background:#1f232c; border:1px solid var(--border); cursor:pointer; font-size:13.5px;
+    user-select:none; padding:8px 12px; transition:background .12s, border-color .12s, color .12s;
   }
-  .row:hover{
-    border-color:var(--accent-dim);
-  }
-  .row .row-label{
-    flex:1;
-  }
-  .row .row-time{
-    font-size:11px;
-    color:var(--muted);
-    white-space:nowrap;
-    flex-shrink:0;
-  }
-  .row.checked{
-    background:var(--accent);
-    color:#0f1115;
-    border-color:var(--accent);
-  }
-  .row.checked .row-label{
-    text-decoration:line-through;
-    font-weight:600;
-  }
-  .row.checked .row-time{
-    color:#1f3d33;
-  }
-
-  .microbreak{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin:2px 0 2px 10px;
-    color:var(--muted);
-    font-size:11px;
-    cursor:pointer;
-  }
-  .microbreak::before{
-    content:"↳";
-    color:var(--border);
-  }
-  .microbreak span{
-    background:rgba(255,255,255,0.03);
-    border:1px dashed var(--border);
-    padding:2px 9px;
-    border-radius:999px;
-    transition:background .12s, border-color .12s, color .12s;
-  }
-  .microbreak:hover span{
-    border-color:var(--accent-dim);
-  }
-  .microbreak.checked span{
-    background:var(--accent);
-    color:#0f1115;
-    border:1px solid var(--accent);
-    font-weight:700;
-    text-decoration:line-through;
-  }
-
-  .pause{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:10px 0 14px;
-    color:var(--muted);
-    font-size:12px;
-    cursor:pointer;
-  }
-  .pause::before, .pause::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:var(--border);
-  }
-  .pause span{
-    white-space:nowrap;
-    background:rgba(255,255,255,0.03);
-    border:1px dashed var(--border);
-    padding:3px 10px;
-    border-radius:999px;
-    transition:background .12s, border-color .12s, color .12s;
-  }
-  .pause:hover span{
-    border-color:var(--accent-dim);
-  }
-  .pause.checked span{
-    background:var(--accent);
-    color:#0f1115;
-    border:1px solid var(--accent);
-    font-weight:700;
-    text-decoration:line-through;
-  }
-  .pause.provera span{
-    border-style:solid;
-    border-color:var(--accent-dim);
-  }
-
-  .reset-btn{
-    background:transparent;
-    border:1px solid var(--border);
-    color:var(--muted);
-    padding:6px 12px;
-    border-radius:8px;
-    font-size:12px;
-    cursor:pointer;
-  }
-  .reset-btn:hover{
-    border-color:#c0392b;
-    color:#e07a6f;
-  }
+  .row:hover{ border-color:var(--accent-dim); }
+  .row .row-label{ flex:1; }
+  .row .row-time{ font-size:11px; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+  .row.checked{ background:var(--accent); color:#0f1115; border-color:var(--accent); }
+  .row.checked .row-label{ text-decoration:line-through; font-weight:600; }
+  .row.checked .row-time{ color:#1f3d33; }
+  .microbreak{ display:flex; align-items:center; gap:8px; margin:2px 0 2px 10px; color:var(--muted); font-size:11px; cursor:pointer; }
+  .microbreak::before{ content:"↳"; color:var(--border); }
+  .microbreak span{ background:rgba(255,255,255,0.03); border:1px dashed var(--border); padding:2px 9px; border-radius:999px; transition:background .12s, border-color .12s, color .12s; }
+  .microbreak:hover span{ border-color:var(--accent-dim); }
+  .microbreak.checked span{ background:var(--accent); color:#0f1115; border:1px solid var(--accent); font-weight:700; text-decoration:line-through; }
+  .pause{ display:flex; align-items:center; gap:10px; margin:10px 0 14px; color:var(--muted); font-size:12px; cursor:pointer; }
+  .pause::before, .pause::after{ content:""; flex:1; height:1px; background:var(--border); }
+  .pause span{ white-space:nowrap; background:rgba(255,255,255,0.03); border:1px dashed var(--border); padding:3px 10px; border-radius:999px; transition:background .12s, border-color .12s, color .12s; }
+  .pause:hover span{ border-color:var(--accent-dim); }
+  .pause.checked span{ background:var(--accent); color:#0f1115; border:1px solid var(--accent); font-weight:700; text-decoration:line-through; }
+  .pause.provera span{ border-style:solid; border-color:var(--accent-dim); }
+  .reset-btn{ background:transparent; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer; }
+  .reset-btn:hover{ border-color:#c0392b; color:#e07a6f; }
 </style>
 </head>
 <body>
 
 <h1>Plan učenja — Politikologija religije</h1>
-<div class="sub">25.8. 16:00 → 26.8. 07:00 · klikni da označiš završeno</div>
+<div class="sub">25.8. 19:00 → 26.8. 08:00 · klikni da označiš završeno</div>
 
 <div class="overall">
   <div>
@@ -273,15 +90,10 @@
 <div id="blocks"></div>
 
 <script>
-// Each block is either:
-//  type "items": named entries, each with its own time label. canPause: insert 5-min microbreak after each item.
-//  type "range": numeric grid from -> to (question numbers).
-// After each block: optional "provera" chip and a "pauza" chip, each with its own time label.
-
 const blocks = [
   {
     title: "Blok 1 — Rider: tekstovi sa spiska",
-    time: "16:00–21:24 · 5h 24min (4h29 čitanje + 55min mikropauze)",
+    time: "19:00–00:24 · 5h 24min (4h29 čitanje + 55min mikropauze — netaknuto)",
     type: "items",
     microbreak: "5 min",
     items: [
@@ -299,13 +111,12 @@ const blocks = [
       { label: "Elštajn — religija i demokratija", time: "13 min" }
     ],
     after: [
-      { kind: "provera", label: "brza provera", time: "10 min · 21:24–21:34" },
-      { kind: "pauza", label: "pauza", time: "10 min · 21:34–21:44" }
+      { kind: "pauza", label: "pauza", time: "7 min · 00:24–00:31" }
     ]
   },
   {
-    title: "Blok 2 — Teme 96–114 koje nisu iz ridera, samo skripta",
-    time: "21:44–22:34 · 50 min",
+    title: "Blok 2 — 🔴 Teme 96–114 koje nisu iz ridera, samo skripta",
+    time: "00:31–01:31 · 60 min",
     type: "items",
     items: [
       { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "" },
@@ -317,33 +128,30 @@ const blocks = [
       { label: "Hrišćanstvo i demokratija (Berger)", time: "" }
     ],
     after: [
-      { kind: "provera", label: "brza provera", time: "8 min · 22:34–22:42" },
-      { kind: "pauza", label: "pauza", time: "10 min · 22:42–22:52" }
+      { kind: "pauza", label: "pauza", time: "7 min · 01:31–01:38" }
     ]
   },
   {
     title: "Blok 3 — Pitanja 1–18 iz skripte",
-    time: "22:52–23:37 · 45 min",
+    time: "01:38–02:36 · 58 min",
     type: "range",
     from: 1, to: 18,
     after: [
-      { kind: "provera", label: "brza provera", time: "8 min · 23:37–23:45" },
-      { kind: "pauza", label: "pauza", time: "10 min · 23:45–23:55" }
+      { kind: "pauza", label: "pauza", time: "7 min · 02:36–02:43" }
     ]
   },
   {
     title: "Blok 4 — Pitanja 69–95 iz skripte",
-    time: "23:55–02:25 · 2h 30min (najveća rezerva ako kasnimo — ovde se prvo seče)",
+    time: "02:43–04:03 · 1h 20min",
     type: "range",
     from: 69, to: 95,
     after: [
-      { kind: "provera", label: "brza provera", time: "10 min · 02:25–02:35" },
-      { kind: "pauza", label: "pauza", time: "10 min · 02:35–02:45" }
+      { kind: "pauza", label: "pauza", time: "7 min · 04:03–04:10" }
     ]
   },
   {
     title: "Blok 5 — Prelazak SKRIPTA SKRIPTE (kondenzovano)",
-    time: "02:45–03:25 · 40 min",
+    time: "04:10–04:38 · 28 min",
     type: "items",
     items: [
       { label: "Pitanja 1–18 (kondenzovano)", time: "" },
@@ -351,29 +159,27 @@ const blocks = [
       { label: "Pitanja 96–114 (kondenzovano)", time: "" }
     ],
     after: [
-      { kind: "provera", label: "brza provera", time: "8 min · 03:25–03:33" },
-      { kind: "pauza", label: "pauza", time: "10 min · 03:33–03:43" }
+      { kind: "pauza", label: "pauza", time: "8 min · 04:38–04:46" }
     ]
   },
   {
     title: "Blok 6 — DODATAK (odgovori za usmeni)",
-    time: "03:43–04:43 · 60 min — produženo, ima konkretnih zamki (npr. pogrešno tumačenje Filpota i Prodromou) koje vredi zapamtiti",
+    time: "04:46–05:16 · 30 min",
     type: "range",
     from: 1, to: 55,
     after: [
-      { kind: "provera", label: "brza provera", time: "10 min · 04:43–04:53" },
-      { kind: "pauza", label: "reset", time: "7 min · 04:53–05:00" }
+      { kind: "pauza", label: "reset", time: "5 min · 05:16–05:21" }
     ]
   },
   {
     title: "Finalni pregled — sve u kratkim crtama",
-    time: "05:00–07:00 · 2h, tačno na vreme",
+    time: "05:21–08:00 · 2h 39min",
     type: "items",
     items: [
-      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "50 min · 05:00–05:50" },
-      { label: "69–95 — brzi refresh", time: "30 min · 05:50–06:20" },
-      { label: "1–18 — brzi refresh", time: "20 min · 06:20–06:40" },
-      { label: "DODATAK + sve što je palo na proverama", time: "20 min · 06:40–07:00" }
+      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "71 min · 05:21–06:32" },
+      { label: "69–95 — brzi refresh", time: "34 min · 06:32–07:06" },
+      { label: "1–18 — brzi refresh", time: "20 min · 07:06–07:26" },
+      { label: "DODATAK + sve što je palo na proverama", time: "34 min · 07:26–08:00" }
     ]
   }
 ];

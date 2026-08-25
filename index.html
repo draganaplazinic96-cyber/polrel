@@ -2,7 +2,7 @@
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
-<title>Checklist pitanja</title>
+<title>Plan učenja — checklist</title>
 <style>
   :root{
     --bg:#0f1115;
@@ -39,6 +39,9 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
+    position:sticky;
+    top:12px;
+    z-index:5;
   }
   .overall .num{
     font-size:22px;
@@ -65,13 +68,14 @@
     font-size:15px;
   }
   .block-time{
-    font-size:13px;
+    font-size:12px;
     color:var(--accent);
     font-weight:600;
     background:rgba(110,231,183,0.08);
     padding:3px 10px;
     border-radius:999px;
     border:1px solid var(--accent-dim);
+    white-space:nowrap;
   }
   .block-progress{
     font-size:12px;
@@ -91,6 +95,8 @@
     width:0%;
     transition:width .2s ease;
   }
+
+  /* number grid (used for question ranges) */
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(46px,1fr));
@@ -119,19 +125,85 @@
     border-color:var(--accent);
     text-decoration:line-through;
   }
-  .reset-btn{
-    background:transparent;
-    border:1px solid var(--border);
-    color:var(--muted);
-    padding:6px 12px;
+
+  /* named list (used for texts / topics) */
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    height:auto;
+    min-height:42px;
     border-radius:8px;
-    font-size:12px;
+    background:#1f232c;
+    border:1px solid var(--border);
+    cursor:pointer;
+    font-size:13.5px;
+    user-select:none;
+    padding:8px 12px;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .row:hover{
+    border-color:var(--accent-dim);
+  }
+  .row .row-label{
+    flex:1;
+  }
+  .row .row-time{
+    font-size:11px;
+    color:var(--muted);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .row.checked{
+    background:var(--accent);
+    color:#0f1115;
+    border-color:var(--accent);
+  }
+  .row.checked .row-label{
+    text-decoration:line-through;
+    font-weight:600;
+  }
+  .row.checked .row-time{
+    color:#1f3d33;
+  }
+
+  .microbreak{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:2px 0 2px 10px;
+    color:var(--muted);
+    font-size:11px;
     cursor:pointer;
   }
-  .reset-btn:hover{
-    border-color:#c0392b;
-    color:#e07a6f;
+  .microbreak::before{
+    content:"↳";
+    color:var(--border);
   }
+  .microbreak span{
+    background:rgba(255,255,255,0.03);
+    border:1px dashed var(--border);
+    padding:2px 9px;
+    border-radius:999px;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .microbreak:hover span{
+    border-color:var(--accent-dim);
+  }
+  .microbreak.checked span{
+    background:var(--accent);
+    color:#0f1115;
+    border:1px solid var(--accent);
+    font-weight:700;
+    text-decoration:line-through;
+  }
+
   .pause{
     display:flex;
     align-items:center;
@@ -162,16 +234,33 @@
     background:var(--accent);
     color:#0f1115;
     border:1px solid var(--accent);
-    border-style:solid;
     font-weight:700;
     text-decoration:line-through;
+  }
+  .pause.provera span{
+    border-style:solid;
+    border-color:var(--accent-dim);
+  }
+
+  .reset-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .reset-btn:hover{
+    border-color:#c0392b;
+    color:#e07a6f;
   }
 </style>
 </head>
 <body>
 
-<h1>Checklist pitanja</h1>
-<div class="sub">Klikni na broj da ga označiš kao završen</div>
+<h1>Plan učenja — Politikologija religije</h1>
+<div class="sub">25.8. 15:00 → 26.8. 06:00 · klikni da označiš završeno</div>
 
 <div class="overall">
   <div>
@@ -184,22 +273,128 @@
 <div id="blocks"></div>
 
 <script>
+// Each block is either:
+//  type "items": named entries, each with its own time label. canPause: insert 5-min microbreak after each item.
+//  type "range": numeric grid from -> to (question numbers).
+// After each block: optional "provera" chip and a "pauza" chip, each with its own time label.
+
 const blocks = [
-  { label: "1–18",    from: 1,   to: 18,  time: "1 h" },
-  { label: "69–75",   from: 69,  to: 75,  time: "45 min" },
-  { label: "76–82",   from: 76,  to: 82,  time: "45 min" },
-  { label: "83–89",   from: 83,  to: 89,  time: "45 min" },
-  { label: "90–95",   from: 90,  to: 95,  time: "45 min" },
-  { label: "96–100",  from: 96,  to: 100, time: "1 h" },
-  { label: "101–105", from: 101, to: 105, time: "1 h" },
-  { label: "106–109", from: 106, to: 109, time: "1 h" },
-  { label: "110–113", from: 110, to: 113, time: "1 h" },
+  {
+    title: "Blok 1 — Rider: tekstovi sa spiska",
+    time: "15:00–20:24 · 5h 24min",
+    type: "items",
+    microbreak: "5 min",
+    items: [
+      { label: "Tokvil — politikologija religije (Jevtić)", time: "15 min" },
+      { label: "Berger — teza o sekularizaciji", time: "8 min" },
+      { label: "Kazanova — sekularno i sekularizmi", time: "16 min" },
+      { label: "Hantington — Treći talas (uvod + religijske promene)", time: "37 min" },
+      { label: "Hantington — sukob civilizacija", time: "24 min" },
+      { label: "Stepan — uzajamna tolerancija", time: "25 min" },
+      { label: "Stepan & Linc — arapsko proleće", time: "18 min" },
+      { label: "Filpot — politička ambivalentnost religije", time: "27 min" },
+      { label: "Fiš — islam i autoritarizam", time: "42 min" },
+      { label: "Foks — demokratije i odvajanje religije od države", time: "30 min" },
+      { label: "Prodromou — ambivalentnost pravoslavlja", time: "14 min" },
+      { label: "Elštajn — religija i demokratija", time: "13 min" }
+    ],
+    after: [
+      { kind: "provera", label: "brza provera", time: "10 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Blok 2 — Rider teme samo iz skripte",
+    time: "20:34–21:34 · 50 min",
+    type: "items",
+    items: [
+      { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "" },
+      { label: "Islam u Kini (Jevtić)", time: "" },
+      { label: "Multikulturno društvo i religija (Jevtić)", time: "" },
+      { label: "Komeito partija i politički život Japana (Jevtić)", time: "" },
+      { label: "Politička korektnost, terorizam i religija (Jevtić)", time: "" },
+      { label: "Religija, država i demokratija (Drisen)", time: "" },
+      { label: "Hrišćanstvo i demokratija (Berger)", time: "" }
+    ],
+    after: [
+      { kind: "provera", label: "brza provera", time: "8 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Blok 3 — Pitanja 1–18 iz skripte",
+    time: "21:42–22:27 · 35 min",
+    type: "range",
+    from: 1, to: 18,
+    after: [
+      { kind: "provera", label: "brza provera", time: "8 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Blok 4 — Pitanja 69–95 iz skripte",
+    time: "22:45–01:15 · 2h 30min",
+    type: "range",
+    from: 69, to: 95,
+    after: [
+      { kind: "provera", label: "brza provera", time: "10 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Blok 5 — Prelazak SKRIPTA SKRIPTE (kondenzovano)",
+    time: "01:35–02:15 · 40 min",
+    type: "items",
+    items: [
+      { label: "Pitanja 1–18 (kondenzovano)", time: "" },
+      { label: "Pitanja 69–95 (kondenzovano)", time: "" },
+      { label: "Pitanja 96–114 (kondenzovano)", time: "" }
+    ],
+    after: [
+      { kind: "provera", label: "brza provera", time: "8 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Blok 6 — DODATAK (odgovori za usmeni)",
+    time: "02:33–03:13 · 40 min",
+    type: "range",
+    from: 1, to: 55,
+    after: [
+      { kind: "provera", label: "brza provera", time: "8 min" },
+      { kind: "pauza", label: "pauza", time: "10 min" }
+    ]
+  },
+  {
+    title: "Finalni pregled — sve u kratkim crtama",
+    time: "03:21–05:31 · 2h",
+    type: "items",
+    items: [
+      { label: "Rider spisak — brzi refresh teza", time: "" },
+      { label: "1–18 i 69–95 — brzi refresh", time: "" },
+      { label: "96–114 — brzi refresh", time: "" },
+      { label: "DODATAK — brzi refresh", time: "" }
+    ],
+    after: [
+      { kind: "pauza", label: "rezerva do 06:00", time: "29 min" }
+    ]
+  }
 ];
 
-let state = {}; // { "1": true, "2": false, ... } in-memory only
+let state = {};
 
-function totalQuestions(){
-  return blocks.reduce((s,b)=> s + (b.to - b.from + 1), 0);
+function totalCheckable(){
+  let total = 0;
+  blocks.forEach((b, bi) => {
+    if(b.type === "range"){
+      total += (b.to - b.from + 1);
+    } else {
+      total += b.items.length;
+      if(b.microbreak) total += Math.max(0, b.items.length - 1);
+    }
+    if(b.after) total += b.after.length;
+  });
+  return total;
 }
 
 function render(){
@@ -207,50 +402,85 @@ function render(){
   container.innerHTML = '';
 
   blocks.forEach((b, bi) => {
-    const nums = [];
-    for(let n=b.from; n<=b.to; n++) nums.push(n);
-    const checkedCount = nums.filter(n => state[n]).length;
-    const pct = Math.round((checkedCount / nums.length) * 100);
-
     const blockEl = document.createElement('div');
     blockEl.className = 'block';
+
+    let checkedCount = 0;
+    let denom = 0;
+
+    if(b.type === "range"){
+      denom = b.to - b.from + 1;
+      for(let n = b.from; n <= b.to; n++){
+        if(state[`b${bi}-n${n}`]) checkedCount++;
+      }
+    } else {
+      denom = b.items.length;
+      b.items.forEach((_, ii) => { if(state[`b${bi}-i${ii}`]) checkedCount++; });
+    }
+
+    const pct = denom ? Math.round((checkedCount / denom) * 100) : 0;
+
     blockEl.innerHTML = `
       <div class="block-head">
-        <div class="block-title">Pitanja ${b.label}</div>
+        <div class="block-title">${b.title}</div>
         <div class="block-time">${b.time}</div>
       </div>
-      <div class="block-progress">${checkedCount} / ${nums.length} završeno</div>
+      <div class="block-progress">${checkedCount} / ${denom} završeno</div>
       <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
-      <div class="grid" id="grid-${bi}"></div>
     `;
+
+    if(b.type === "range"){
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      for(let n = b.from; n <= b.to; n++){
+        const key = `b${bi}-n${n}`;
+        const item = document.createElement('div');
+        item.className = 'item' + (state[key] ? ' checked' : '');
+        item.textContent = n;
+        item.onclick = () => { state[key] = !state[key]; render(); };
+        grid.appendChild(item);
+      }
+      blockEl.appendChild(grid);
+    } else {
+      const list = document.createElement('div');
+      list.className = 'list';
+      b.items.forEach((it, ii) => {
+        const key = `b${bi}-i${ii}`;
+        const row = document.createElement('div');
+        row.className = 'row' + (state[key] ? ' checked' : '');
+        row.innerHTML = `<span class="row-label">${it.label}</span>` +
+          (it.time ? `<span class="row-time">${it.time}</span>` : '');
+        row.onclick = () => { state[key] = !state[key]; render(); };
+        list.appendChild(row);
+
+        if(b.microbreak && ii < b.items.length - 1){
+          const mbKey = `b${bi}-mb${ii}`;
+          const mb = document.createElement('div');
+          mb.className = 'microbreak' + (state[mbKey] ? ' checked' : '');
+          mb.innerHTML = `<span>pauza ${b.microbreak}</span>`;
+          mb.onclick = () => { state[mbKey] = !state[mbKey]; render(); };
+          list.appendChild(mb);
+        }
+      });
+      blockEl.appendChild(list);
+    }
+
     container.appendChild(blockEl);
 
-    const grid = blockEl.querySelector(`#grid-${bi}`);
-    nums.forEach(n => {
-      const item = document.createElement('div');
-      item.className = 'item' + (state[n] ? ' checked' : '');
-      item.textContent = n;
-      item.onclick = () => {
-        state[n] = !state[n];
-        render();
-      };
-      grid.appendChild(item);
-    });
-
-    if(bi < blocks.length - 1){
-      const pause = document.createElement('div');
-      pause.className = 'pause' + (state['pause-' + bi] ? ' checked' : '');
-      pause.innerHTML = '<span>pauza 5 min</span>';
-      pause.onclick = () => {
-        state['pause-' + bi] = !state['pause-' + bi];
-        render();
-      };
-      container.appendChild(pause);
+    if(b.after){
+      b.after.forEach((a, ai) => {
+        const key = `b${bi}-after${ai}`;
+        const pause = document.createElement('div');
+        pause.className = 'pause' + (a.kind === 'provera' ? ' provera' : '') + (state[key] ? ' checked' : '');
+        pause.innerHTML = `<span>${a.label}${a.time ? ' · ' + a.time : ''}</span>`;
+        pause.onclick = () => { state[key] = !state[key]; render(); };
+        container.appendChild(pause);
+      });
     }
   });
 
   const totalChecked = Object.values(state).filter(Boolean).length;
-  document.getElementById('overallCount').textContent = `${totalChecked} / ${totalQuestions()}`;
+  document.getElementById('overallCount').textContent = `${totalChecked} / ${totalCheckable()}`;
 }
 
 function resetAll(){

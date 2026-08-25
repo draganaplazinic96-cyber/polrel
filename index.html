@@ -91,6 +91,12 @@
   .diff-badge.late{ background:rgba(224,122,111,0.12); color:#e07a6f; }
   .diff-badge.early{ background:rgba(110,231,183,0.12); color:var(--accent); }
   .diff-badge.ontime{ background:rgba(110,231,183,0.12); color:var(--accent); }
+  .item-actual-row{ display:flex; align-items:center; gap:6px; margin:2px 0 6px 12px; font-size:11px; color:var(--muted); flex-wrap:wrap; }
+  .item-actual-row input[type="number"]{
+    background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
+    padding:3px 6px; font-size:11px; width:56px; font-family:inherit;
+  }
+  .item-actual-row input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
   .reset-btn{ background:transparent; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer; }
   .reset-btn:hover{ border-color:#c0392b; color:#e07a6f; }
 </style>
@@ -103,7 +109,7 @@
 <div class="countdown">
   <div class="label">Do ispita (09:00)</div>
   <div class="time" id="countdownDisplay">13:00:00</div>
-  <div class="status-line" id="statusLine">Unesi stvarno vreme završetka bloka da vidiš da li kasniš ili si ispred plana</div>
+  <div class="status-line" id="statusLine"></div>
 </div>
 
 
@@ -120,71 +126,71 @@
 <script>
 const blocks = [
   {
-    title: "Blok 1 — Rider (fizički primerak): samo ovih 6 tekstova (×2 vreme)",
+    title: "Blok 1 — Rider 6 tekstova",
     time: "20:00–01:01 · 5h 01min (4h36 čitanje + 25min mikropauze)",
     endTime: "01:01",
     type: "items",
     microbreak: "5 min",
     items: [
-      { label: "Tokvil — politikologija religije (Jevtić)", time: "30 min" },
-      { label: "Berger — teza o sekularizaciji", time: "16 min" },
-      { label: "Kazanova — sekularno i sekularizmi", time: "32 min" },
-      { label: "Filpot — politička ambivalentnost religije", time: "54 min" },
-      { label: "Fiš — islam i autoritarizam", time: "84 min" },
-      { label: "Foks — demokratije i odvajanje religije od države", time: "60 min" }
+      { label: "Tokvil — politikologija religije (Jevtić)", time: "30 min · rider 15 str" },
+      { label: "Berger — teza o sekularizaciji", time: "16 min · rider 5 str" },
+      { label: "Kazanova — sekularno i sekularizmi", time: "32 min · rider 18 str" },
+      { label: "Filpot — politička ambivalentnost religije", time: "54 min · rider 21 str" },
+      { label: "Fiš — islam i autoritarizam", time: "84 min · rider 34 str" },
+      { label: "Foks — demokratije i odvajanje religije od države", time: "60 min · rider 25 str" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "10 min · 01:01–01:10" }
+      { kind: "pauza", label: "pauza", time: "9 min · 01:01–01:10" }
     ]
   },
   {
-    title: "Blok 2 — Skripta (sve ostalo, uključujući izbačeno iz ridera)",
-    time: "01:10–03:10 · 2h 00min",
-    endTime: "03:10",
+    title: "Blok 2 — Skripta 13 tekstova",
+    time: "01:10–02:31 · 1h 21min",
+    endTime: "02:31",
     type: "items",
     items: [
-      { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "" },
-      { label: "Islam u Kini (Jevtić)", time: "" },
-      { label: "Multikulturno društvo i religija (Jevtić)", time: "" },
-      { label: "Komeito partija i politički život Japana (Jevtić)", time: "" },
-      { label: "Politička korektnost, terorizam i religija (Jevtić)", time: "" },
-      { label: "Religija, država i demokratija (Drisen)", time: "" },
-      { label: "Hrišćanstvo i demokratija (Berger)", time: "" },
-      { label: "Hantington — Treći talas", time: "" },
-      { label: "Hantington — sukob civilizacija", time: "" },
-      { label: "Stepan — uzajamna tolerancija", time: "" },
-      { label: "Stepan & Linc — arapsko proleće", time: "" },
-      { label: "Prodromou — ambivalentnost pravoslavlja", time: "" },
-      { label: "Elštajn — religija i demokratija", time: "" }
+      { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "8 min · rider 17 str / skripta 6 str" },
+      { label: "Islam u Kini (Jevtić)", time: "5 min · rider 12 str / skripta 4 str" },
+      { label: "Multikulturno društvo i religija (Jevtić)", time: "8 min · rider 16 str / skripta 7 str" },
+      { label: "Komeito partija i politički život Japana (Jevtić)", time: "6 min · rider 16 str / skripta 5 str" },
+      { label: "Politička korektnost, terorizam i religija (Jevtić)", time: "5 min · skripta 4 str" },
+      { label: "Hantington — Treći talas", time: "3 min · skripta 2 str" },
+      { label: "Hantington — sukob civilizacija", time: "7 min · rider 28 str / skripta 6 str" },
+      { label: "Stepan — uzajamna tolerancija", time: "8 min · rider 21 str / skripta 7 str" },
+      { label: "Stepan & Linc — arapsko proleće", time: "8 min · rider 16 str / skripta 6 str" },
+      { label: "Religija, država i demokratija (Drisen)", time: "10 min · rider 26 str / skripta 8 str" },
+      { label: "Prodromou — ambivalentnost pravoslavlja", time: "3 min · rider 14 str / skripta 3 str" },
+      { label: "Elštajn — religija i demokratija", time: "4 min · rider 13 str / skripta 3 str" },
+      { label: "Hrišćanstvo i demokratija (Berger)", time: "6 min · rider 5 str / skripta 5 str" }
     ],
     after: [
-      { kind: "pauza", label: "🚿 pauza za tuširanje", time: "20 min · 03:10–03:30" }
+      { kind: "pauza", label: "🚿 pauza za tuširanje", time: "20 min · 02:31–02:51" }
     ]
   },
   {
     title: "Blok 3 — Pitanja 1–18 iz skripte",
-    time: "03:31–04:29 · 58 min",
-    endTime: "04:29",
+    time: "02:51–03:20 · 29 min",
+    endTime: "03:20",
     type: "range",
     from: 1, to: 18,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 04:29–04:34" }
+      { kind: "pauza", label: "pauza", time: "5 min · 03:20–03:25" }
     ]
   },
   {
     title: "Blok 4 — Pitanja 69–95 iz skripte",
-    time: "04:34–05:54 · 1h 20min",
-    endTime: "05:54",
+    time: "03:25–05:53 · 2h 28min",
+    endTime: "05:53",
     type: "range",
     from: 69, to: 95,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 05:54–05:59" }
+      { kind: "pauza", label: "pauza", time: "5 min · 05:53–05:58" }
     ]
   },
   {
-    title: "Blok 5 — Prelazak SKRIPTA SKRIPTE (kondenzovano)",
-    time: "05:59–06:27 · 28 min",
-    endTime: "06:27",
+    title: "Blok 5 — Sve SKRIPTA SKRIPTE",
+    time: "05:58–06:26 · 28 min",
+    endTime: "06:26",
     type: "items",
     items: [
       { label: "Pitanja 1–18 (kondenzovano)", time: "" },
@@ -192,32 +198,56 @@ const blocks = [
       { label: "Pitanja 96–114 (kondenzovano)", time: "" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 06:27–06:32" }
+      { kind: "pauza", label: "pauza", time: "5 min · 06:26–06:31" }
     ]
   },
   {
     title: "Finalni pregled — sve u kratkim crtama",
-    time: "06:32–08:20 · 1h 48min",
-    endTime: "08:20",
+    time: "06:31–08:19 · 1h 48min",
+    endTime: "08:19",
     type: "items",
     items: [
-      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "57 min · 06:32–07:29" },
-      { label: "69–95 — brzi refresh", time: "27 min · 07:29–07:56" },
-      { label: "1–18 — brzi refresh", time: "24 min · 07:56–08:20" }
+      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "57 min · 06:31–07:28" },
+      { label: "69–95 — brzi refresh", time: "27 min · 07:28–07:55" },
+      { label: "1–18 — brzi refresh", time: "24 min · 07:55–08:19" }
     ]
   },
   {
     title: "🕘 Bafer do ispita",
-    time: "08:20–09:00 · 40 min",
+    time: "08:19–09:00 · 41 min",
     type: "items",
     items: [
-      { label: "Put, poslednji pogled, disanje", time: "40 min" }
+      { label: "Put, poslednji pogled, disanje", time: "41 min" }
     ]
   }
 ];
 
 let state = {};
-let actualTimes = {}; // bi -> "HH:MM" koje je korisnik uneo kao stvarno vreme završetka bloka
+let actualTimes = {};
+let actualItemMinutes = {}; // "b{bi}-i{ii}" -> broj (stvarno utrošenih minuta na tu stavku
+
+function parsePlannedMinutes(timeStr){
+  if(!timeStr) return null;
+  const match = timeStr.match(/(\d+)\s*min/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function itemDiffInfo(plannedMin, actualMin){
+  if(actualMin === null || actualMin === undefined || actualMin === '') return null;
+  const diff = actualMin - plannedMin;
+  if(diff === 0) return { text: "tačno", cls: "ontime" };
+  if(diff > 0) return { text: `+${diff} min`, cls: "late" };
+  return { text: `${diff} min`, cls: "early" };
+}
+
+function updateItemActual(key, value){
+  if(value !== '' && value !== null){
+    actualItemMinutes[key] = parseInt(value, 10);
+  } else {
+    delete actualItemMinutes[key];
+  }
+  render();
+}
 
 function timeToMinutes(t){
   if(!t) return null;
@@ -251,7 +281,7 @@ function updateStatusLine(){
   blocks.forEach((b, bi) => { if(b.endTime && actualTimes[bi]) lastIdx = bi; });
 
   if(lastIdx === -1){
-    el.innerHTML = "Unesi stvarno vreme završetka bloka da vidiš da li kasniš ili si ispred plana";
+    el.innerHTML = "";
     return;
   }
 
@@ -368,6 +398,22 @@ function render(){
         row.onclick = () => { state[key] = !state[key]; render(); };
         list.appendChild(row);
 
+        const planned = parsePlannedMinutes(it.time);
+        if(planned !== null){
+          const itemInfo = itemDiffInfo(planned, actualItemMinutes[key]);
+          const itemRow = document.createElement('div');
+          itemRow.className = 'item-actual-row';
+          itemRow.innerHTML = `
+            <span>Stvarno (plan ${planned} min):</span>
+            <input type="number" min="0" placeholder="${planned}" value="${actualItemMinutes[key] !== undefined ? actualItemMinutes[key] : ''}">
+            ${itemInfo ? `<span class="diff-badge ${itemInfo.cls}">${itemInfo.text}</span>` : ''}
+          `;
+          const inp = itemRow.querySelector('input');
+          inp.onclick = (e) => e.stopPropagation();
+          inp.onchange = (e) => { e.stopPropagation(); updateItemActual(key, e.target.value); };
+          list.appendChild(itemRow);
+        }
+
         if(b.microbreak && ii < b.items.length - 1){
           const mbKey = `b${bi}-mb${ii}`;
           const mb = document.createElement('div');
@@ -409,6 +455,7 @@ function render(){
 function resetAll(){
   state = {};
   actualTimes = {};
+  actualItemMinutes = {};
   render();
 }
 

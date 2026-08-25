@@ -92,31 +92,25 @@
 <script>
 const blocks = [
   {
-    title: "Blok 1 — Rider: tekstovi sa spiska",
-    time: "20:00–01:24 · 5h 24min (4h29 čitanje + 55min mikropauze — netaknuto)",
+    title: "Blok 1 — Rider: samo ovih 6 tekstova (×2 vreme)",
+    time: "20:00–01:01 · 5h 01min (4h36 čitanje + 25min mikropauze)",
     type: "items",
     microbreak: "5 min",
     items: [
-      { label: "Tokvil — politikologija religije (Jevtić)", time: "15 min" },
-      { label: "Berger — teza o sekularizaciji", time: "8 min" },
-      { label: "Kazanova — sekularno i sekularizmi", time: "16 min" },
-      { label: "Hantington — Treći talas (uvod + religijske promene)", time: "37 min" },
-      { label: "Hantington — sukob civilizacija", time: "24 min" },
-      { label: "Stepan — uzajamna tolerancija", time: "25 min" },
-      { label: "Stepan & Linc — arapsko proleće", time: "18 min" },
-      { label: "Filpot — politička ambivalentnost religije", time: "27 min" },
-      { label: "Fiš — islam i autoritarizam", time: "42 min" },
-      { label: "Foks — demokratije i odvajanje religije od države", time: "30 min" },
-      { label: "Prodromou — ambivalentnost pravoslavlja", time: "14 min" },
-      { label: "Elštajn — religija i demokratija", time: "13 min" }
+      { label: "Tokvil — politikologija religije (Jevtić)", time: "30 min" },
+      { label: "Berger — teza o sekularizaciji", time: "16 min" },
+      { label: "Kazanova — sekularno i sekularizmi", time: "32 min" },
+      { label: "Filpot — politička ambivalentnost religije", time: "54 min" },
+      { label: "Fiš — islam i autoritarizam", time: "84 min" },
+      { label: "Foks — demokratije i odvajanje religije od države", time: "60 min" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "7 min · 01:24–01:31" }
+      { kind: "pauza", label: "pauza", time: "5 min · 01:01–01:06" }
     ]
   },
   {
-    title: "Blok 2 — 🔴 Teme 96–114 koje nisu iz ridera, samo skripta",
-    time: "01:31–02:31 · 60 min",
+    title: "Blok 2 — Skripta (sve ostalo, uključujući izbačeno iz ridera)",
+    time: "01:06–03:06 · 2h 00min",
     type: "items",
     items: [
       { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "" },
@@ -125,33 +119,39 @@ const blocks = [
       { label: "Komeito partija i politički život Japana (Jevtić)", time: "" },
       { label: "Politička korektnost, terorizam i religija (Jevtić)", time: "" },
       { label: "Religija, država i demokratija (Drisen)", time: "" },
-      { label: "Hrišćanstvo i demokratija (Berger)", time: "" }
+      { label: "Hrišćanstvo i demokratija (Berger)", time: "" },
+      { label: "Hantington — Treći talas", time: "" },
+      { label: "Hantington — sukob civilizacija", time: "" },
+      { label: "Stepan — uzajamna tolerancija", time: "" },
+      { label: "Stepan & Linc — arapsko proleće", time: "" },
+      { label: "Prodromou — ambivalentnost pravoslavlja", time: "" },
+      { label: "Elštajn — religija i demokratija", time: "" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "7 min · 02:31–02:38" }
+      { kind: "pauza", label: "pauza", time: "5 min · 03:06–03:11" }
     ]
   },
   {
     title: "Blok 3 — Pitanja 1–18 iz skripte",
-    time: "02:38–03:36 · 58 min",
+    time: "03:11–04:09 · 58 min",
     type: "range",
     from: 1, to: 18,
     after: [
-      { kind: "pauza", label: "pauza", time: "7 min · 03:36–03:43" }
+      { kind: "pauza", label: "pauza", time: "5 min · 04:09–04:14" }
     ]
   },
   {
     title: "Blok 4 — Pitanja 69–95 iz skripte",
-    time: "03:43–05:03 · 1h 20min",
+    time: "04:14–05:34 · 1h 20min",
     type: "range",
     from: 69, to: 95,
     after: [
-      { kind: "pauza", label: "pauza", time: "7 min · 05:03–05:10" }
+      { kind: "pauza", label: "pauza", time: "5 min · 05:34–05:39" }
     ]
   },
   {
     title: "Blok 5 — Prelazak SKRIPTA SKRIPTE (kondenzovano)",
-    time: "05:10–05:38 · 28 min",
+    time: "05:39–06:07 · 28 min",
     type: "items",
     items: [
       { label: "Pitanja 1–18 (kondenzovano)", time: "" },
@@ -159,17 +159,17 @@ const blocks = [
       { label: "Pitanja 96–114 (kondenzovano)", time: "" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "8 min · 05:38–05:46" }
+      { kind: "pauza", label: "pauza", time: "5 min · 06:07–06:12" }
     ]
   },
   {
     title: "Finalni pregled — sve u kratkim crtama",
-    time: "05:46–08:00 · 2h 14min",
+    time: "06:12–08:00 · 1h 48min",
     type: "items",
     items: [
-      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "71 min · 05:46–06:57" },
-      { label: "69–95 — brzi refresh", time: "34 min · 06:57–07:31" },
-      { label: "1–18 — brzi refresh", time: "29 min · 07:31–08:00" }
+      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "57 min · 06:12–07:09" },
+      { label: "69–95 — brzi refresh", time: "27 min · 07:09–07:36" },
+      { label: "1–18 — brzi refresh", time: "24 min · 07:36–08:00" }
     ]
   }
 ];

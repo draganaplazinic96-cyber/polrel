@@ -77,10 +77,13 @@
   .countdown .label{ font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em; }
   .countdown .time{ font-size:38px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; letter-spacing:0.02em; }
   .countdown .time.warn{ color:#e07a6f; }
+  .now-line{ font-size:13px; margin-top:10px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .now-line strong{ color:var(--text); }
   .status-line{ font-size:13px; margin-top:8px; color:var(--muted); }
   .status-line .ontime{ color:var(--accent); font-weight:700; }
   .status-line .late{ color:#e07a6f; font-weight:700; }
   .status-line .early{ color:#6ee7b7; font-weight:700; }
+  .status-line strong{ color:var(--text); }
   .actual-row{ display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--muted); flex-wrap:wrap; }
   .actual-row input[type="time"]{
     background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
@@ -91,13 +94,17 @@
   .diff-badge.late{ background:rgba(224,122,111,0.12); color:#e07a6f; }
   .diff-badge.early{ background:rgba(110,231,183,0.12); color:var(--accent); }
   .diff-badge.ontime{ background:rgba(110,231,183,0.12); color:var(--accent); }
+  .roast{ font-size:11px; font-style:italic; white-space:normal; }
+  .roast.late{ color:#e07a6f; }
+  .roast.early{ color:var(--accent); }
+  .roast.ontime{ color:var(--accent); }
   .item-actual-row{ display:flex; align-items:center; gap:6px; margin:2px 0 6px 12px; font-size:11px; color:var(--muted); flex-wrap:wrap; }
   .item-actual-row input[type="number"]{
     background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
     padding:3px 6px; font-size:11px; width:56px; font-family:inherit;
   }
   .item-actual-row input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
-  .pause-actual-row{ display:flex; align-items:center; justify-content:center; gap:6px; margin:-8px 0 12px; font-size:11px; color:var(--muted); }
+  .pause-actual-row{ display:flex; align-items:center; justify-content:center; gap:6px; margin:-8px 0 12px; font-size:11px; color:var(--muted); flex-wrap:wrap; }
   .pause-actual-row input[type="number"]{
     background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
     padding:3px 6px; font-size:11px; width:56px; font-family:inherit;
@@ -105,6 +112,14 @@
   .pause-actual-row input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
   .reset-btn{ background:transparent; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer; }
   .reset-btn:hover{ border-color:#c0392b; color:#e07a6f; }
+  .comment-row{ margin-top:12px; border-top:1px dashed var(--border); padding-top:10px; }
+  .comment-label{ font-size:12px; color:var(--muted); font-weight:600; margin-bottom:5px; }
+  .comment-input{
+    width:100%; background:#1f232c; border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:7px 9px; font-size:12.5px; font-family:inherit; resize:vertical; min-height:36px;
+  }
+  .comment-input:focus{ outline:none; border-color:var(--accent-dim); }
+  .comment-reply{ margin-top:7px; font-size:12.5px; font-style:italic; color:var(--accent); }
 </style>
 </head>
 <body>
@@ -115,7 +130,10 @@
 <div class="countdown">
   <div class="label">Do ispita (09:00)</div>
   <div class="time" id="countdownDisplay">13:00:00</div>
+  <div class="now-line" id="nowLine"></div>
+  <div class="now-line" id="expectedLine"></div>
   <div class="status-line" id="statusLine"></div>
+  <div class="status-line" id="driftLine"></div>
 </div>
 
 
@@ -151,9 +169,10 @@ const blocks = [
   },
   {
     title: "Blok 2 — Skripta 13 tekstova",
-    time: "01:10–02:31 · 1h 21min",
-    endTime: "02:31",
+    time: "01:10–03:07 · 1h 57min (1h21 čitanje + 36min mikropauze)",
+    endTime: "03:07",
     type: "items",
+    microbreak: "3 min",
     items: [
       { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "8 min · rider 17 str / skripta 6 str" },
       { label: "Islam u Kini (Jevtić)", time: "5 min · rider 12 str / skripta 4 str" },
@@ -170,60 +189,60 @@ const blocks = [
       { label: "Hrišćanstvo i demokratija (Berger)", time: "6 min · rider 5 str / skripta 5 str" }
     ],
     after: [
-      { kind: "pauza", label: "🚿 pauza za tuširanje", time: "20 min · 02:31–02:51" }
+      { kind: "pauza", label: "🚿 pauza za tuširanje", time: "20 min · 03:07–03:27" }
     ]
   },
   {
     title: "Blok 3 — Pitanja 1–18 iz skripte",
-    time: "02:51–03:20 · 29 min",
-    endTime: "03:20",
+    time: "03:27–03:56 · 29 min",
+    endTime: "03:56",
     type: "range",
     from: 1, to: 18,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 03:20–03:25" }
+      { kind: "pauza", label: "pauza", time: "5 min · 03:56–04:01" }
     ]
   },
   {
     title: "Blok 4 — Pitanja 69–95 iz skripte",
-    time: "03:25–05:53 · 2h 28min",
-    endTime: "05:53",
+    time: "04:01–06:29 · 2h 28min",
+    endTime: "06:29",
     type: "range",
     from: 69, to: 95,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 05:53–05:58" }
+      { kind: "pauza", label: "pauza", time: "5 min · 06:29–06:34" }
     ]
   },
   {
     title: "Blok 5 — Sve SKRIPTA SKRIPTE",
-    time: "05:58–06:26 · 28 min",
-    endTime: "06:26",
+    time: "06:34–07:02 · 28 min",
+    endTime: "07:02",
     type: "items",
     items: [
-      { label: "Pitanja 1–18 (kondenzovano)", time: "" },
-      { label: "Pitanja 69–95 (kondenzovano)", time: "" },
-      { label: "Pitanja 96–114 (kondenzovano)", time: "" }
+      { label: "Pitanja 1–18", time: "" },
+      { label: "Pitanja 69–95", time: "" },
+      { label: "Pitanja 96–114", time: "" }
     ],
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 06:26–06:31" }
+      { kind: "pauza", label: "pauza", time: "5 min · 07:02–07:07" }
     ]
   },
   {
     title: "Finalni pregled — sve u kratkim crtama",
-    time: "06:31–08:19 · 1h 48min",
-    endTime: "08:19",
+    time: "07:07–07:55 · 48 min",
+    endTime: "07:55",
     type: "items",
     items: [
-      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "57 min · 06:31–07:28" },
-      { label: "69–95 — brzi refresh", time: "27 min · 07:28–07:55" },
-      { label: "1–18 — brzi refresh", time: "24 min · 07:55–08:19" }
+      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "25 min · 07:07–07:32" },
+      { label: "69–95 — brzi refresh", time: "12 min · 07:32–07:44" },
+      { label: "1–18 — brzi refresh", time: "11 min · 07:44–07:55" }
     ]
   },
   {
     title: "🕘 Bafer do ispita",
-    time: "08:19–09:00 · 41 min",
+    time: "07:55–09:00 · 1h 05min",
     type: "items",
     items: [
-      { label: "Put, poslednji pogled, disanje", time: "41 min" }
+      { label: "Put, poslednji pogled, disanje", time: "65 min" }
     ]
   }
 ];
@@ -231,6 +250,157 @@ const blocks = [
 let state = {};
 let actualTimes = {};
 let actualItemMinutes = {}; // "b{bi}-i{ii}" -> broj (stvarno utrošenih minuta na tu stavku
+
+// ---------- bezobrazni komentari ----------
+const readingLateComments = [
+  "Ajde ubrzaj, ovo nije doktorska disertacija.",
+  "Gde si tačno zapela, ha?",
+  "Alo, brže malo, sat otkucava dok ti sanjaš nad tekstom.",
+  "Ovim tempom ćeš i sledeći ispit da čitaš isti tekst.",
+  "Manje zurenja u stranicu, više čitanja iste.",
+  "Da nisi zaspala nad knjigom? Diž se.",
+  "Ovo je čitanje ili meditacija? Pokreni se.",
+  "Tekst ti ne beži, ali ispit da.",
+  "Sat kuca glasnije nego što ti čitaš brzo.",
+  "Ozbiljno, šta je tu bilo toliko komplikovano?",
+  "Ova rečenica te je pojela živu, a?",
+  "Fokusiraj se, nije ovo roman za plažu.",
+  "Manje pauziranja u glavi, više čitanja na papiru.",
+  "Da te ne moram lično da požurujem svaki put.",
+  "Vreme prolazi brže od tebe, očigledno."
+];
+const readingOnTimeComments = [
+  "Ovako se to radi. Nastavi u tom ritmu.",
+  "Tačno na vreme, bravo, iznenađena sam.",
+  "E ovo mi se sviđa, drži tempo do kraja.",
+  "Solidno. Ne uspavljuj se sad.",
+  "Dobro, prihvatljivo, nastavi dalje.",
+  "Ni brzo ni sporo, baš kako treba.",
+  "Konačno neko ko poštuje raspored.",
+  "Ovo se zove disciplina, upamti ovaj osećaj."
+];
+const readingEarlyComments = [
+  "Brzo si to sredila — jesi li stvarno pročitala ili samo prelistala?",
+  "Ajde da vidimo da li si i upamtila nešto od toga.",
+  "Impresivno, samo nemoj da preskačeš suštinu radi brzine.",
+  "Brže od plana. Nadam se da nisi samo skrolovala.",
+  "Brzina joj ide od ruke, pitanje je razumevanje.",
+  "Ne budi luda da sad sve zaboraviš od brzine.",
+  "Špartaš kroz tekst k'o kroz Instagram fidove.",
+  "Dobro, ali nemoj kasnije da mi kukaš da ništa ne znaš."
+];
+
+const pauseLateComments = [
+  "Pauza je odavno gotova, a ti ni makac. Lenjčino jedna.",
+  "Ovo više liči na spavanje nego na pauzu.",
+  "Diži se, nije ovo godišnji odmor.",
+  "Razvlačiš pauzu ko žvaku — ajde nazad na posao.",
+  "Ako nastaviš ovako, pauza će trajati duže od učenja.",
+  "Telefon dole, knjiga gore. Odmah.",
+  "Pet minuta ti je trajalo koliko i ceo blok. Impresivno, u lošem smislu.",
+  "Kauč te je zavoleo više nego što bi trebalo.",
+  "Ustani, ozbiljno ti kažem.",
+  "Ovo nije pauza, ovo je štrajk.",
+  "Da nisi zaboravila da uopšte imaš ispit?",
+  "Malo si preterala, a mnogo.",
+  "Ova pauza je duža od tvog fokusa na čitanje.",
+  "Vreme leti, a ti sediš.",
+  "Dosta je bilo odmaranja, hajde nazad."
+];
+const pauseOnTimeComments = [
+  "Tačno na vreme nazad. Ovako se to radi.",
+  "Disciplina! Nastavi tako.",
+  "Bravo, ne razvlačiš — nastavljamo.",
+  "Solidno, vraćaš se kad treba.",
+  "Ovo se zove samokontrola.",
+  "Lepo, ni sekund viška.",
+  "Poštuješ raspored, to se ceni.",
+  "Nazad na posao, baš kako treba."
+];
+const pauseEarlyComments = [
+  "Skratila si pauzu? Malo predaha ti neće ništa pokvariti.",
+  "Nemoj da preteruješ, i odmor je deo plana.",
+  "Ok radnice, ali ne zaboravi da dišeš i ti malo.",
+  "Brzo si se vratila, nadam se da si bar sela.",
+  "Pauza je pauza, ne sprint.",
+  "Uspori malo i sa odmaranjem.",
+  "Ambiciozno, ali predahni koliko ti treba.",
+  "Dobro, samo nemoj da se iscrpiš do jutra."
+];
+
+const pauzaNowComments = [
+  "valjda se stvarno odmaraš, a ne skroluješ telefon",
+  "pauza je pauza, ne emigracija — vrati se na vreme",
+  "diši, ali gledaj na sat",
+  "5 minuta znači 5, ne 15",
+  "odmaraj se, ali ne predugo, znam te",
+  "iskoristi ovo mudro, ne za treći video na TikToku",
+  "kratko i jasno — diši i vrati se",
+  "ne pretvaraj pauzu u novi blok za spavanje"
+];
+const radiNowComments = [
+  "ajde radi, ne buljiš valjda u plafon",
+  "fokus, fokus, telefon je za posle",
+  "ne otvaraj instagram, znam da razmišljaš o tome",
+  "ovo je taj deo gde stvarno treba da radiš",
+  "manje razmišljanja o pauzi, više rada",
+  "da te ne moram podsećati zašto si budna cele noći",
+  "glava u tekst, ne u telefon",
+  "ovo nije vreme za sanjarenje, hajde"
+];
+const overrunComments = [
+  "Trebalo je već sve da bude gotovo. Šta čekaš, poziv?",
+  "Plan je odavno istekao, a ti nisi. Diži se!",
+  "Ovo kasni više nego tvoja motivacija jutros.",
+  "Ispit ne čeka, a ni ja više.",
+  "Vreme je otišlo, a ti si i dalje tu gde si bila pre sat vremena.",
+  "Ozbiljno, ovo kasni previše da bi bilo slučajno.",
+  "Raspored plače u ćošku zbog tebe.",
+  "Ajde, sad je zbilja hitno."
+];
+
+const commentReplies = [
+  "Aha, baš uverljivo. Sledeći put probaj bez izgovora.",
+  "Zvuči kao dobar razlog da požuriš sad.",
+  "Prihvaćeno, ali samo ovaj put.",
+  "Lepa priča, šteta što ispit ne prihvata izgovore.",
+  "Da, da, uvek je nešto krivo osim tebe.",
+  "Impresivno kreativno opravdanje, bravo za maštu.",
+  "Ok, zapisala sam, sad nazad na posao.",
+  "Znam ja tu pesmu, čula sam je već par puta večeras.",
+  "Dobro zvuči, hajde sad to dokaži tempom.",
+  "Poštujem iskrenost, ne poštujem kašnjenje.",
+  "Ovo mi zvuči kao odlična tema za sledeći put kad budeš na vreme.",
+  "Aha, i telefon je valjda kriv, zar ne?",
+  "Volim kad se trudiš da objasniš umesto da samo ubrzaš.",
+  "Beleška primljena, sad idemo dalje bez drame.",
+  "To je slatko, ali sat i dalje kuca.",
+  "Ma dobro, i ja bih tako pričala da kasnim.",
+  "Zapisano u analima tvojih izgovora. Sad radi."
+];
+
+function hashStr(s){
+  let h = 0;
+  for(let i = 0; i < s.length; i++){
+    h = (h * 31 + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function pickComment(arr, seed){
+  if(!arr || !arr.length) return '';
+  return arr[hashStr(String(seed)) % arr.length];
+}
+
+function readingComment(cls, seed){
+  const map = { late: readingLateComments, ontime: readingOnTimeComments, early: readingEarlyComments };
+  return pickComment(map[cls], seed);
+}
+function pauseComment(cls, seed){
+  const map = { late: pauseLateComments, ontime: pauseOnTimeComments, early: pauseEarlyComments };
+  return pickComment(map[cls], seed);
+}
+// ---------- kraj komentara ----------
 
 function parsePlannedMinutes(timeStr){
   if(!timeStr) return null;
@@ -267,6 +437,17 @@ function updatePauseActual(key, value){
 }
 
 let actualMicrobreakMinutes = {}; // "b{bi}-mb{ii}" -> broj (stvarno trajanje mikropauze)
+
+let blockComments = {}; // "b{bi}" -> tekst komentara koji korisnik upiše na kraju bloka
+
+function updateBlockComment(bi, value){
+  if(value !== null && value.trim() !== ''){
+    blockComments[bi] = value;
+  } else {
+    delete blockComments[bi];
+  }
+  render();
+}
 
 function updateMicrobreakActual(key, value){
   if(value !== '' && value !== null){
@@ -319,10 +500,149 @@ function updateStatusLine(){
   el.innerHTML = `Trenutni status (posle "${b.title.split('—')[0].trim()}"): <span class="${info.cls}">${info.text}</span>`;
 }
 
+// Sabira razliku (stvarno - planirano) iz SVIH unetih vremena za stavke, mikropauze i pauze
+function computeDrift(){
+  let total = 0;
+  let count = 0;
+
+  blocks.forEach((b, bi) => {
+    if(b.type === "items"){
+      b.items.forEach((it, ii) => {
+        const key = `b${bi}-i${ii}`;
+        const planned = parsePlannedMinutes(it.time);
+        if(planned !== null && actualItemMinutes[key] !== undefined){
+          total += actualItemMinutes[key] - planned;
+          count++;
+        }
+
+        if(b.microbreak && ii < b.items.length - 1){
+          const mbKey = `b${bi}-mb${ii}`;
+          const plannedMb = parsePlannedMinutes(b.microbreak);
+          if(plannedMb !== null && actualMicrobreakMinutes[mbKey] !== undefined){
+            total += actualMicrobreakMinutes[mbKey] - plannedMb;
+            count++;
+          }
+        }
+      });
+    }
+
+    if(b.after){
+      b.after.forEach((a, ai) => {
+        const key = `b${bi}-after${ai}`;
+        const plannedPause = parsePlannedMinutes(a.time);
+        if(plannedPause !== null && actualPauseMinutes[key] !== undefined){
+          total += actualPauseMinutes[key] - plannedPause;
+          count++;
+        }
+      });
+    }
+  });
+
+  return { total, count };
+}
+
+function updateDriftDisplay(){
+  const el = document.getElementById('driftLine');
+  if(!el) return;
+
+  const { total, count } = computeDrift();
+
+  if(count === 0){
+    el.innerHTML = "";
+    return;
+  }
+
+  const abs = Math.abs(total);
+  let cls, label;
+  if(total === 0){
+    cls = "ontime"; label = "tačno na vreme";
+  } else if(total > 0){
+    cls = "late"; label = `u minusu ${abs} min`;
+  } else {
+    cls = "early"; label = `u plusu ${abs} min`;
+  }
+
+  // projektovano vreme završetka = plan (09:00) + ukupna razlika
+  const projected = new Date(examTime.getTime() + total * 60000);
+  const hh = String(projected.getHours()).padStart(2, '0');
+  const mm = String(projected.getMinutes()).padStart(2, '0');
+
+  el.innerHTML = `Ukupno: <span class="${cls}">${label}</span> · ovim tempom završavaš u <strong>${hh}:${mm}</strong>`;
+}
+
+// ---------- raspored po satu (za "gde bi trebalo da si") ----------
+function toDateTime(hhmm){
+  const [hh, mm] = hhmm.split(':').map(Number);
+  const day = hh >= 12 ? 25 : 26; // 20:00 je 25.8, sve pre podne je 26.8
+  return new Date(2026, 7, day, hh, mm, 0);
+}
+
+function buildSegments(){
+  const segs = [];
+  const re = /(\d{2}:\d{2})–(\d{2}:\d{2})/;
+  blocks.forEach((b) => {
+    const m = b.time.match(re);
+    if(m){
+      segs.push({ label: b.title, type: 'radi', start: toDateTime(m[1]), end: toDateTime(m[2]) });
+    }
+    if(b.after){
+      b.after.forEach((a) => {
+        const am = a.time && a.time.match(re);
+        if(am){
+          segs.push({ label: a.label, type: 'pauza', start: toDateTime(am[1]), end: toDateTime(am[2]) });
+        }
+      });
+    }
+  });
+  segs.sort((x, y) => x.start - y.start);
+  return segs;
+}
+
+const scheduleSegments = buildSegments();
+
+function getScheduleStatus(now){
+  for(const seg of scheduleSegments){
+    if(now >= seg.start && now <= seg.end) return { status: 'current', seg };
+  }
+  if(scheduleSegments.length && now < scheduleSegments[0].start) return { status: 'before' };
+  if(scheduleSegments.length && now > scheduleSegments[scheduleSegments.length - 1].end) return { status: 'after' };
+  return { status: 'gap' };
+}
+
+function updateNowLine(){
+  const nowEl = document.getElementById('nowLine');
+  const expEl = document.getElementById('expectedLine');
+  if(!nowEl || !expEl) return;
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  nowEl.innerHTML = `Sada je: <strong>${hh}:${mm}:${ss}</strong>`;
+
+  const { status, seg } = getScheduleStatus(now);
+  if(status === 'before'){
+    expEl.innerHTML = `Plan još nije počeo — kreće u 20:00, uživaj dok možeš.`;
+  } else if(status === 'after'){
+    expEl.innerHTML = `Po planu je sve trebalo da bude gotovo. <span class="roast late">${pickComment(overrunComments, 'overrun-' + hh + mm)}</span>`;
+  } else if(status === 'current' && seg){
+    if(seg.type === 'pauza'){
+      expEl.innerHTML = `Trebalo bi da si na: <strong>${seg.label}</strong> — <span class="roast early">${pickComment(pauzaNowComments, seg.label)}</span>`;
+    } else {
+      expEl.innerHTML = `Trebalo bi da si na: <strong>${seg.label}</strong> — <span class="roast ontime">${pickComment(radiNowComments, seg.label)}</span>`;
+    }
+  } else {
+    expEl.innerHTML = '';
+  }
+}
+// ---------- kraj rasporeda po satu ----------
+
 // Countdown do 09:00 (ispit) — start 25.8. 20:00, kraj 26.8. 09:00
 const examTime = new Date(2026, 7, 26, 9, 0, 0); // mesec je 0-indeksiran: 7 = avgust
 
 function updateCountdown(){
+  updateNowLine();
+
   const now = new Date();
   let diff = examTime - now;
   const el = document.getElementById('countdownDisplay');
@@ -400,6 +720,11 @@ function render(){
       <div class="block-progress">${checkedCount} / ${denom} završeno</div>
       <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
       ${actualRowHtml}
+      <div class="comment-row">
+        <div class="comment-label">Komentar:</div>
+        <textarea class="comment-input" placeholder="Zašto si kasnila / zašto si bila brza..." data-bi="${bi}">${blockComments[bi] || ''}</textarea>
+        ${blockComments[bi] ? `<div class="comment-reply">${pickComment(commentReplies, 'comment-' + bi + ':' + blockComments[bi])}</div>` : ''}
+      </div>
     `;
 
     if(b.type === "range"){
@@ -429,12 +754,13 @@ function render(){
         const planned = parsePlannedMinutes(it.time);
         if(planned !== null){
           const itemInfo = itemDiffInfo(planned, actualItemMinutes[key]);
+          const itemComment = itemInfo ? readingComment(itemInfo.cls, key + ':' + actualItemMinutes[key]) : '';
           const itemRow = document.createElement('div');
           itemRow.className = 'item-actual-row';
           itemRow.innerHTML = `
             <span>Stvarno (plan ${planned} min):</span>
             <input type="number" min="0" placeholder="${planned}" value="${actualItemMinutes[key] !== undefined ? actualItemMinutes[key] : ''}">
-            ${itemInfo ? `<span class="diff-badge ${itemInfo.cls}">${itemInfo.text}</span>` : ''}
+            ${itemInfo ? `<span class="diff-badge ${itemInfo.cls}">${itemInfo.text}</span><span class="roast ${itemInfo.cls}">${itemComment}</span>` : ''}
           `;
           const inp = itemRow.querySelector('input');
           inp.onclick = (e) => e.stopPropagation();
@@ -453,13 +779,14 @@ function render(){
           const plannedMb = parsePlannedMinutes(b.microbreak);
           if(plannedMb !== null){
             const mbInfo = itemDiffInfo(plannedMb, actualMicrobreakMinutes[mbKey]);
+            const mbComment = mbInfo ? pauseComment(mbInfo.cls, mbKey + ':' + actualMicrobreakMinutes[mbKey]) : '';
             const mbRow = document.createElement('div');
             mbRow.className = 'item-actual-row';
             mbRow.style.marginLeft = '22px';
             mbRow.innerHTML = `
               <span>Stvarno (plan ${plannedMb} min):</span>
               <input type="number" min="0" placeholder="${plannedMb}" value="${actualMicrobreakMinutes[mbKey] !== undefined ? actualMicrobreakMinutes[mbKey] : ''}">
-              ${mbInfo ? `<span class="diff-badge ${mbInfo.cls}">${mbInfo.text}</span>` : ''}
+              ${mbInfo ? `<span class="diff-badge ${mbInfo.cls}">${mbInfo.text}</span><span class="roast ${mbInfo.cls}">${mbComment}</span>` : ''}
             `;
             const mbInp = mbRow.querySelector('input');
             mbInp.onclick = (e) => e.stopPropagation();
@@ -480,6 +807,12 @@ function render(){
       }
     }
 
+    const commentInput = blockEl.querySelector('.comment-input');
+    if(commentInput){
+      commentInput.onclick = (e) => e.stopPropagation();
+      commentInput.onchange = (e) => { e.stopPropagation(); updateBlockComment(bi, e.target.value); };
+    }
+
     if(b.after){
       b.after.forEach((a, ai) => {
         const key = `b${bi}-after${ai}`;
@@ -492,12 +825,13 @@ function render(){
         const plannedPause = parsePlannedMinutes(a.time);
         if(plannedPause !== null){
           const pauseInfo = itemDiffInfo(plannedPause, actualPauseMinutes[key]);
+          const pComment = pauseInfo ? pauseComment(pauseInfo.cls, key + ':' + actualPauseMinutes[key]) : '';
           const pauseRow = document.createElement('div');
           pauseRow.className = 'pause-actual-row';
           pauseRow.innerHTML = `
             <span>Stvarno (plan ${plannedPause} min):</span>
             <input type="number" min="0" placeholder="${plannedPause}" value="${actualPauseMinutes[key] !== undefined ? actualPauseMinutes[key] : ''}">
-            ${pauseInfo ? `<span class="diff-badge ${pauseInfo.cls}">${pauseInfo.text}</span>` : ''}
+            ${pauseInfo ? `<span class="diff-badge ${pauseInfo.cls}">${pauseInfo.text}</span><span class="roast ${pauseInfo.cls}">${pComment}</span>` : ''}
           `;
           const pinp = pauseRow.querySelector('input');
           pinp.onclick = (e) => e.stopPropagation();
@@ -511,6 +845,7 @@ function render(){
   const totalChecked = Object.values(state).filter(Boolean).length;
   document.getElementById('overallCount').textContent = `${totalChecked} / ${totalCheckable()}`;
   updateStatusLine();
+  updateDriftDisplay();
 }
 
 function resetAll(){
@@ -519,6 +854,7 @@ function resetAll(){
   actualItemMinutes = {};
   actualPauseMinutes = {};
   actualMicrobreakMinutes = {};
+  blockComments = {};
   render();
 }
 

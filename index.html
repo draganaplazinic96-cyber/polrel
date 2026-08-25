@@ -77,6 +77,20 @@
   .countdown .label{ font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em; }
   .countdown .time{ font-size:38px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; letter-spacing:0.02em; }
   .countdown .time.warn{ color:#e07a6f; }
+  .status-line{ font-size:13px; margin-top:8px; color:var(--muted); }
+  .status-line .ontime{ color:var(--accent); font-weight:700; }
+  .status-line .late{ color:#e07a6f; font-weight:700; }
+  .status-line .early{ color:#6ee7b7; font-weight:700; }
+  .actual-row{ display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--muted); flex-wrap:wrap; }
+  .actual-row input[type="time"]{
+    background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
+    padding:4px 8px; font-size:12px; font-family:inherit;
+  }
+  .actual-row input[type="time"]:focus{ outline:none; border-color:var(--accent-dim); }
+  .diff-badge{ font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px; white-space:nowrap; }
+  .diff-badge.late{ background:rgba(224,122,111,0.12); color:#e07a6f; }
+  .diff-badge.early{ background:rgba(110,231,183,0.12); color:var(--accent); }
+  .diff-badge.ontime{ background:rgba(110,231,183,0.12); color:var(--accent); }
   .reset-btn{ background:transparent; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer; }
   .reset-btn:hover{ border-color:#c0392b; color:#e07a6f; }
 </style>
@@ -89,6 +103,7 @@
 <div class="countdown">
   <div class="label">Do ispita (09:00)</div>
   <div class="time" id="countdownDisplay">13:00:00</div>
+  <div class="status-line" id="statusLine">Unesi stvarno vreme završetka bloka da vidiš da li kasniš ili si ispred plana</div>
 </div>
 
 
@@ -107,6 +122,7 @@ const blocks = [
   {
     title: "Blok 1 — Rider (fizički primerak): samo ovih 6 tekstova (×2 vreme)",
     time: "20:00–01:01 · 5h 01min (4h36 čitanje + 25min mikropauze)",
+    endTime: "01:01",
     type: "items",
     microbreak: "5 min",
     items: [
@@ -124,6 +140,7 @@ const blocks = [
   {
     title: "Blok 2 — Skripta (sve ostalo, uključujući izbačeno iz ridera)",
     time: "01:10–03:10 · 2h 00min",
+    endTime: "03:10",
     type: "items",
     items: [
       { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "" },
@@ -147,6 +164,7 @@ const blocks = [
   {
     title: "Blok 3 — Pitanja 1–18 iz skripte",
     time: "03:31–04:29 · 58 min",
+    endTime: "04:29",
     type: "range",
     from: 1, to: 18,
     after: [
@@ -156,6 +174,7 @@ const blocks = [
   {
     title: "Blok 4 — Pitanja 69–95 iz skripte",
     time: "04:34–05:54 · 1h 20min",
+    endTime: "05:54",
     type: "range",
     from: 69, to: 95,
     after: [
@@ -165,6 +184,7 @@ const blocks = [
   {
     title: "Blok 5 — Prelazak SKRIPTA SKRIPTE (kondenzovano)",
     time: "05:59–06:27 · 28 min",
+    endTime: "06:27",
     type: "items",
     items: [
       { label: "Pitanja 1–18 (kondenzovano)", time: "" },
@@ -178,6 +198,7 @@ const blocks = [
   {
     title: "Finalni pregled — sve u kratkim crtama",
     time: "06:32–08:20 · 1h 48min",
+    endTime: "08:20",
     type: "items",
     items: [
       { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "57 min · 06:32–07:29" },
@@ -196,6 +217,49 @@ const blocks = [
 ];
 
 let state = {};
+let actualTimes = {}; // bi -> "HH:MM" koje je korisnik uneo kao stvarno vreme završetka bloka
+
+function timeToMinutes(t){
+  if(!t) return null;
+  const [hh, mm] = t.split(':').map(Number);
+  return hh * 60 + mm;
+}
+
+function diffInfo(targetStr, actualStr){
+  const target = timeToMinutes(targetStr);
+  const actual = timeToMinutes(actualStr);
+  if(actual === null) return null;
+  const diff = actual - target;
+  if(diff === 0) return { text: "tačno na vreme", cls: "ontime" };
+  if(diff > 0) return { text: `+${diff} min kasni`, cls: "late" };
+  return { text: `${diff} min ispred`, cls: "early" };
+}
+
+function updateActual(bi, value){
+  if(value){
+    actualTimes[bi] = value;
+  } else {
+    delete actualTimes[bi];
+  }
+  render();
+}
+
+function updateStatusLine(){
+  const el = document.getElementById('statusLine');
+  // nađi poslednji (po redosledu blokova) uneti actual time
+  let lastIdx = -1;
+  blocks.forEach((b, bi) => { if(b.endTime && actualTimes[bi]) lastIdx = bi; });
+
+  if(lastIdx === -1){
+    el.innerHTML = "Unesi stvarno vreme završetka bloka da vidiš da li kasniš ili si ispred plana";
+    return;
+  }
+
+  const b = blocks[lastIdx];
+  const info = diffInfo(b.endTime, actualTimes[lastIdx]);
+  if(!info){ return; }
+  el.innerHTML = `Trenutni status (posle "${b.title.split('—')[0].trim()}"): <span class="${info.cls}">${info.text}</span>`;
+}
 
 // Countdown do 09:00 (ispit) — start 25.8. 20:00, kraj 26.8. 09:00
 const examTime = new Date(2026, 7, 26, 9, 0, 0); // mesec je 0-indeksiran: 7 = avgust
@@ -261,6 +325,15 @@ function render(){
 
     const pct = denom ? Math.round((checkedCount / denom) * 100) : 0;
 
+    const info = b.endTime ? diffInfo(b.endTime, actualTimes[bi]) : null;
+    const actualRowHtml = b.endTime ? `
+      <div class="actual-row">
+        <span>Stvarno završeno:</span>
+        <input type="time" value="${actualTimes[bi] || ''}" data-bi="${bi}" class="actual-input">
+        ${info ? `<span class="diff-badge ${info.cls}">${info.text}</span>` : ''}
+      </div>
+    ` : '';
+
     blockEl.innerHTML = `
       <div class="block-head">
         <div class="block-title">${b.title}</div>
@@ -268,6 +341,7 @@ function render(){
       </div>
       <div class="block-progress">${checkedCount} / ${denom} završeno</div>
       <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+      ${actualRowHtml}
     `;
 
     if(b.type === "range"){
@@ -308,6 +382,13 @@ function render(){
 
     container.appendChild(blockEl);
 
+    if(b.endTime){
+      const input = blockEl.querySelector('.actual-input');
+      if(input){
+        input.onchange = (e) => updateActual(bi, e.target.value);
+      }
+    }
+
     if(b.after){
       b.after.forEach((a, ai) => {
         const key = `b${bi}-after${ai}`;
@@ -322,10 +403,12 @@ function render(){
 
   const totalChecked = Object.values(state).filter(Boolean).length;
   document.getElementById('overallCount').textContent = `${totalChecked} / ${totalCheckable()}`;
+  updateStatusLine();
 }
 
 function resetAll(){
   state = {};
+  actualTimes = {};
   render();
 }
 

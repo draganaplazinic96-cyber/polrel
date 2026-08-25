@@ -120,6 +120,31 @@
   }
   .comment-input:focus{ outline:none; border-color:var(--accent-dim); }
   .comment-reply{ margin-top:7px; font-size:12.5px; font-style:italic; color:var(--accent); }
+
+  .timer-box{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:14px 16px; margin-bottom:16px; text-align:center;
+  }
+  .timer-box .label{ font-size:12px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; }
+  .timer-controls{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .timer-controls input[type="number"]{
+    width:70px; background:#1f232c; border:1px solid var(--border); color:var(--text);
+    border-radius:6px; padding:6px 8px; font-size:13px; font-family:inherit; text-align:center;
+  }
+  .timer-controls input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
+  .timer-btn{
+    background:transparent; border:1px solid var(--accent-dim); color:var(--accent); padding:6px 14px;
+    border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  .timer-btn:hover{ background:rgba(110,231,183,0.08); }
+  .timer-btn.stop{ border-color:#5a3a3a; color:#e07a6f; }
+  .timer-btn.stop:hover{ background:rgba(224,122,111,0.08); }
+  .timer-display{
+    font-size:32px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums;
+    letter-spacing:0.02em;
+  }
+  .timer-display.warn{ color:#e07a6f; }
+  .timer-sub{ font-size:11.5px; color:var(--muted); margin-top:6px; }
 </style>
 </head>
 <body>
@@ -136,6 +161,17 @@
   <div class="status-line" id="driftLine"></div>
 </div>
 
+<div class="timer-box">
+  <div class="label">Tajmer</div>
+  <div class="timer-controls">
+    <input type="number" id="timerMinutesInput" min="1" placeholder="min">
+    <button class="timer-btn" onclick="startTimer()">Start</button>
+    <button class="timer-btn" onclick="pauseTimer()">Pauza</button>
+    <button class="timer-btn stop" onclick="resetTimer()">Reset</button>
+  </div>
+  <div class="timer-display" id="timerDisplay">00:00</div>
+  <div class="timer-sub" id="timerSub">upiši minute i pritisni Start</div>
+</div>
 
 <div class="overall">
   <div>
@@ -665,6 +701,101 @@ function updateCountdown(){
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
+
+// ---------- tajmer (za čitanje / pauzu) ----------
+let timerSeconds = 0;     // ako je pozitivno = koliko je ostalo; kad pređe u minus = koliko je prekoračeno
+let timerRunning = false;
+let timerInterval = null;
+let timerRang = false;
+
+function formatTimerDisplay(totalSeconds){
+  const over = totalSeconds < 0;
+  const abs = Math.abs(totalSeconds);
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const s = abs % 60;
+  const str = h > 0
+    ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return over ? `+${str}` : str;
+}
+
+function playTimerBeep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const beepOnce = (delay) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.3);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.35);
+    };
+    for(let i = 0; i < 4; i++) beepOnce(i * 0.4);
+  } catch(e){ /* audio nije dostupan, nema veze */ }
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('timerDisplay');
+  const sub = document.getElementById('timerSub');
+  if(!el) return;
+  el.textContent = formatTimerDisplay(timerSeconds);
+  if(timerSeconds < 0){
+    el.classList.add('warn');
+    if(sub) sub.textContent = timerRunning ? 'prekoračeno — i dalje broji' : 'pauzirano (prekoračeno)';
+  } else {
+    el.classList.remove('warn');
+    if(sub) sub.textContent = timerRunning ? 'u toku...' : (timerSeconds === 0 ? 'upiši minute i pritisni Start' : 'pauzirano');
+  }
+}
+
+function tickTimer(){
+  if(!timerRunning) return;
+  timerSeconds -= 1;
+  if(timerSeconds === 0 && !timerRang){
+    timerRang = true;
+    playTimerBeep();
+  }
+  updateTimerDisplay();
+}
+
+function startTimer(){
+  if(timerRunning) return;
+  if(timerSeconds === 0){
+    const input = document.getElementById('timerMinutesInput');
+    const mins = parseFloat(input.value);
+    if(!mins || mins <= 0) return;
+    timerSeconds = Math.round(mins * 60);
+    timerRang = false;
+  }
+  timerRunning = true;
+  if(!timerInterval){
+    timerInterval = setInterval(tickTimer, 1000);
+  }
+  updateTimerDisplay();
+}
+
+function pauseTimer(){
+  timerRunning = false;
+  updateTimerDisplay();
+}
+
+function resetTimer(){
+  timerRunning = false;
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  timerSeconds = 0;
+  timerRang = false;
+  const input = document.getElementById('timerMinutesInput');
+  if(input) input.value = '';
+  updateTimerDisplay();
+}
+
+updateTimerDisplay();
+// ---------- kraj tajmera ----------
 
 function totalCheckable(){
   let total = 0;

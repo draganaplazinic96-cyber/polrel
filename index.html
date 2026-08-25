@@ -97,6 +97,12 @@
     padding:3px 6px; font-size:11px; width:56px; font-family:inherit;
   }
   .item-actual-row input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
+  .pause-actual-row{ display:flex; align-items:center; justify-content:center; gap:6px; margin:-8px 0 12px; font-size:11px; color:var(--muted); }
+  .pause-actual-row input[type="number"]{
+    background:#1f232c; border:1px solid var(--border); color:var(--text); border-radius:6px;
+    padding:3px 6px; font-size:11px; width:56px; font-family:inherit;
+  }
+  .pause-actual-row input[type="number"]:focus{ outline:none; border-color:var(--accent-dim); }
   .reset-btn{ background:transparent; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer; }
   .reset-btn:hover{ border-color:#c0392b; color:#e07a6f; }
 </style>
@@ -245,6 +251,28 @@ function updateItemActual(key, value){
     actualItemMinutes[key] = parseInt(value, 10);
   } else {
     delete actualItemMinutes[key];
+  }
+  render();
+}
+
+let actualPauseMinutes = {}; // "b{bi}-after{ai}" -> broj (stvarno trajanje pauze)
+
+function updatePauseActual(key, value){
+  if(value !== '' && value !== null){
+    actualPauseMinutes[key] = parseInt(value, 10);
+  } else {
+    delete actualPauseMinutes[key];
+  }
+  render();
+}
+
+let actualMicrobreakMinutes = {}; // "b{bi}-mb{ii}" -> broj (stvarno trajanje mikropauze)
+
+function updateMicrobreakActual(key, value){
+  if(value !== '' && value !== null){
+    actualMicrobreakMinutes[key] = parseInt(value, 10);
+  } else {
+    delete actualMicrobreakMinutes[key];
   }
   render();
 }
@@ -421,6 +449,23 @@ function render(){
           mb.innerHTML = `<span>pauza ${b.microbreak}</span>`;
           mb.onclick = () => { state[mbKey] = !state[mbKey]; render(); };
           list.appendChild(mb);
+
+          const plannedMb = parsePlannedMinutes(b.microbreak);
+          if(plannedMb !== null){
+            const mbInfo = itemDiffInfo(plannedMb, actualMicrobreakMinutes[mbKey]);
+            const mbRow = document.createElement('div');
+            mbRow.className = 'item-actual-row';
+            mbRow.style.marginLeft = '22px';
+            mbRow.innerHTML = `
+              <span>Stvarno (plan ${plannedMb} min):</span>
+              <input type="number" min="0" placeholder="${plannedMb}" value="${actualMicrobreakMinutes[mbKey] !== undefined ? actualMicrobreakMinutes[mbKey] : ''}">
+              ${mbInfo ? `<span class="diff-badge ${mbInfo.cls}">${mbInfo.text}</span>` : ''}
+            `;
+            const mbInp = mbRow.querySelector('input');
+            mbInp.onclick = (e) => e.stopPropagation();
+            mbInp.onchange = (e) => { e.stopPropagation(); updateMicrobreakActual(mbKey, e.target.value); };
+            list.appendChild(mbRow);
+          }
         }
       });
       blockEl.appendChild(list);
@@ -443,6 +488,22 @@ function render(){
         pause.innerHTML = `<span>${a.label}${a.time ? ' · ' + a.time : ''}</span>`;
         pause.onclick = () => { state[key] = !state[key]; render(); };
         container.appendChild(pause);
+
+        const plannedPause = parsePlannedMinutes(a.time);
+        if(plannedPause !== null){
+          const pauseInfo = itemDiffInfo(plannedPause, actualPauseMinutes[key]);
+          const pauseRow = document.createElement('div');
+          pauseRow.className = 'pause-actual-row';
+          pauseRow.innerHTML = `
+            <span>Stvarno (plan ${plannedPause} min):</span>
+            <input type="number" min="0" placeholder="${plannedPause}" value="${actualPauseMinutes[key] !== undefined ? actualPauseMinutes[key] : ''}">
+            ${pauseInfo ? `<span class="diff-badge ${pauseInfo.cls}">${pauseInfo.text}</span>` : ''}
+          `;
+          const pinp = pauseRow.querySelector('input');
+          pinp.onclick = (e) => e.stopPropagation();
+          pinp.onchange = (e) => { e.stopPropagation(); updatePauseActual(key, e.target.value); };
+          container.appendChild(pauseRow);
+        }
       });
     }
   });
@@ -456,6 +517,8 @@ function resetAll(){
   state = {};
   actualTimes = {};
   actualItemMinutes = {};
+  actualPauseMinutes = {};
+  actualMicrobreakMinutes = {};
   render();
 }
 

@@ -150,11 +150,11 @@
 <body>
 
 <h1>Plan učenja — Politikologija religije</h1>
-<div class="sub">25.8. 20:00 → 26.8. 09:00 · klikni da označiš završeno</div>
+<div class="sub">26.8. 06:20 → 26.8. 09:15 · klikni da označiš završeno</div>
 
 <div class="countdown">
-  <div class="label">Do ispita (09:00)</div>
-  <div class="time" id="countdownDisplay">13:00:00</div>
+  <div class="label">Do ispita (09:15)</div>
+  <div class="time" id="countdownDisplay">02:55:00</div>
   <div class="now-line" id="nowLine"></div>
   <div class="now-line" id="expectedLine"></div>
   <div class="status-line" id="statusLine"></div>
@@ -186,99 +186,60 @@
 <script>
 const blocks = [
   {
-    title: "Blok 1 — Rider 6 tekstova",
-    time: "20:00–01:01 · 5h 01min (4h36 čitanje + 25min mikropauze)",
-    endTime: "01:01",
+    title: "🚿 Tuširanje",
+    time: "06:20–06:30 · 10 min",
+    endTime: "06:30",
     type: "items",
-    microbreak: "5 min",
     items: [
-      { label: "Tokvil — politikologija religije (Jevtić)", time: "30 min · rider 15 str" },
-      { label: "Berger — teza o sekularizaciji", time: "16 min · rider 5 str" },
-      { label: "Kazanova — sekularno i sekularizmi", time: "32 min · rider 18 str" },
-      { label: "Filpot — politička ambivalentnost religije", time: "54 min · rider 21 str" },
-      { label: "Fiš — islam i autoritarizam", time: "84 min · rider 34 str" },
-      { label: "Foks — demokratije i odvajanje religije od države", time: "60 min · rider 25 str" }
-    ],
-    after: [
-      { kind: "pauza", label: "pauza", time: "9 min · 01:01–01:10" }
+      { label: "Tuširanje", time: "10 min" }
     ]
   },
   {
-    title: "Blok 2 — Skripta 13 tekstova",
-    time: "01:10–03:07 · 1h 57min (1h21 čitanje + 36min mikropauze)",
-    endTime: "03:07",
-    type: "items",
-    microbreak: "3 min",
-    items: [
-      { label: "Hrišćanski cionizam kao činilac politike SAD (Jevtić)", time: "8 min · rider 17 str / skripta 6 str" },
-      { label: "Islam u Kini (Jevtić)", time: "5 min · rider 12 str / skripta 4 str" },
-      { label: "Multikulturno društvo i religija (Jevtić)", time: "8 min · rider 16 str / skripta 7 str" },
-      { label: "Komeito partija i politički život Japana (Jevtić)", time: "6 min · rider 16 str / skripta 5 str" },
-      { label: "Politička korektnost, terorizam i religija (Jevtić)", time: "5 min · skripta 4 str" },
-      { label: "Hantington — Treći talas", time: "3 min · skripta 2 str" },
-      { label: "Hantington — sukob civilizacija", time: "7 min · rider 28 str / skripta 6 str" },
-      { label: "Stepan — uzajamna tolerancija", time: "8 min · rider 21 str / skripta 7 str" },
-      { label: "Stepan & Linc — arapsko proleće", time: "8 min · rider 16 str / skripta 6 str" },
-      { label: "Religija, država i demokratija (Drisen)", time: "10 min · rider 26 str / skripta 8 str" },
-      { label: "Prodromou — ambivalentnost pravoslavlja", time: "3 min · rider 14 str / skripta 3 str" },
-      { label: "Elštajn — religija i demokratija", time: "4 min · rider 13 str / skripta 3 str" },
-      { label: "Hrišćanstvo i demokratija (Berger)", time: "6 min · rider 5 str / skripta 5 str" }
-    ],
-    after: [
-      { kind: "pauza", label: "🚿 pauza za tuširanje", time: "20 min · 03:07–03:27" }
-    ]
-  },
-  {
-    title: "Blok 3 — Pitanja 1–18 iz skripte",
-    time: "03:27–03:56 · 29 min",
-    endTime: "03:56",
+    title: "Blok 1 — Rider, pitanja 96–114",
+    time: "06:30–07:30 · 60 min",
+    endTime: "07:30",
     type: "range",
-    from: 1, to: 18,
+    from: 96, to: 114,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 03:56–04:01" }
+      { kind: "pauza", label: "pauza", time: "2 min · 07:30–07:32" }
     ]
   },
   {
-    title: "Blok 4 — Pitanja 69–95 iz skripte",
-    time: "04:01–06:29 · 2h 28min",
-    endTime: "06:29",
+    title: "Blok 2 — Udžbenik, pitanja 1–18 + 69–78",
+    time: "07:32–08:02 · 30 min",
+    endTime: "08:02",
     type: "range",
-    from: 69, to: 95,
+    ranges: [ { from: 1, to: 18 }, { from: 69, to: 78 } ],
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 06:29–06:34" }
+      { kind: "pauza", label: "pauza", time: "2 min · 08:02–08:04" }
     ]
   },
   {
-    title: "Blok 5 — Sve SKRIPTA SKRIPTE",
-    time: "06:34–07:02 · 28 min",
-    endTime: "07:02",
-    type: "items",
-    items: [
-      { label: "Pitanja 1–18", time: "" },
-      { label: "Pitanja 69–95", time: "" },
-      { label: "Pitanja 96–114", time: "" }
-    ],
+    title: "Blok 3 — Udžbenik, pitanja 80–95",
+    time: "08:04–08:29 · 25 min",
+    endTime: "08:29",
+    type: "range",
+    from: 80, to: 95,
     after: [
-      { kind: "pauza", label: "pauza", time: "5 min · 07:02–07:07" }
+      { kind: "pauza", label: "pauza", time: "2 min · 08:29–08:31" }
     ]
   },
   {
-    title: "Finalni pregled — sve u kratkim crtama",
-    time: "07:07–07:55 · 48 min",
-    endTime: "07:55",
+    title: "⭐ Blok 4 — Najčešća pitanja (38 strana)",
+    time: "08:31–09:15 · 44 min",
+    endTime: "09:15",
     type: "items",
     items: [
-      { label: "96–114 — najvažnija, dobijaju najviše vremena", time: "25 min · 07:07–07:32" },
-      { label: "69–95 — brzi refresh", time: "12 min · 07:32–07:44" },
-      { label: "1–18 — brzi refresh", time: "11 min · 07:44–07:55" }
+      { label: "Sva najčešća pitanja — pregled", time: "44 min" }
     ]
   },
   {
-    title: "🕘 Bafer do ispita",
-    time: "07:55–09:00 · 1h 05min",
+    title: "📚 Za put do fakulteta (van rasporeda)",
+    time: "Skripta skripte (13 str) + Dodatak (17 str)",
     type: "items",
     items: [
-      { label: "Put, poslednji pogled, disanje", time: "65 min" }
+      { label: "Skripta skripte — sve", time: "" },
+      { label: "Dodatak: odgovori na pitanja za usmeni — sve", time: "" }
     ]
   }
 ];
@@ -368,7 +329,7 @@ const pauzaNowComments = [
   "valjda se stvarno odmaraš, a ne skroluješ telefon",
   "pauza je pauza, ne emigracija — vrati se na vreme",
   "diši, ali gledaj na sat",
-  "5 minuta znači 5, ne 15",
+  "2 minuta znači 2, ne 15",
   "odmaraj se, ali ne predugo, znam te",
   "iskoristi ovo mudro, ne za treći video na TikToku",
   "kratko i jasno — diši i vrati se",
@@ -609,8 +570,7 @@ function updateDriftDisplay(){
 // ---------- raspored po satu (za "gde bi trebalo da si") ----------
 function toDateTime(hhmm){
   const [hh, mm] = hhmm.split(':').map(Number);
-  const day = hh >= 12 ? 25 : 26; // 20:00 je 25.8, sve pre podne je 26.8
-  return new Date(2026, 7, day, hh, mm, 0);
+  return new Date(2026, 7, 26, hh, mm, 0); // ceo raspored je 26.8, 06:20–09:15
 }
 
 function buildSegments(){
@@ -658,7 +618,7 @@ function updateNowLine(){
 
   const { status, seg } = getScheduleStatus(now);
   if(status === 'before'){
-    expEl.innerHTML = `Plan još nije počeo — kreće u 20:00, uživaj dok možeš.`;
+    expEl.innerHTML = `Plan još nije počeo — kreće u 06:20, uživaj dok možeš.`;
   } else if(status === 'after'){
     expEl.innerHTML = `Po planu je sve trebalo da bude gotovo. <span class="roast late">${pickComment(overrunComments, 'overrun-' + hh + mm)}</span>`;
   } else if(status === 'current' && seg){
@@ -673,8 +633,8 @@ function updateNowLine(){
 }
 // ---------- kraj rasporeda po satu ----------
 
-// Countdown do 09:00 (ispit) — start 25.8. 20:00, kraj 26.8. 09:00
-const examTime = new Date(2026, 7, 26, 9, 0, 0); // mesec je 0-indeksiran: 7 = avgust
+// Countdown do 09:00 (ispit) — start 26.8. 06:20, kraj 26.8. 09:15
+const examTime = new Date(2026, 7, 26, 9, 15, 0); // mesec je 0-indeksiran: 7 = avgust
 
 function updateCountdown(){
   updateNowLine();
@@ -797,11 +757,17 @@ function resetTimer(){
 updateTimerDisplay();
 // ---------- kraj tajmera ----------
 
+function getRangeList(b){
+  if(b.ranges) return b.ranges;
+  if(b.from !== undefined && b.to !== undefined) return [{ from: b.from, to: b.to }];
+  return [];
+}
+
 function totalCheckable(){
   let total = 0;
   blocks.forEach((b, bi) => {
     if(b.type === "range"){
-      total += (b.to - b.from + 1);
+      getRangeList(b).forEach(r => { total += (r.to - r.from + 1); });
     } else {
       total += b.items.length;
       if(b.microbreak) total += Math.max(0, b.items.length - 1);
@@ -823,10 +789,13 @@ function render(){
     let denom = 0;
 
     if(b.type === "range"){
-      denom = b.to - b.from + 1;
-      for(let n = b.from; n <= b.to; n++){
-        if(state[`b${bi}-n${n}`]) checkedCount++;
-      }
+      const ranges = getRangeList(b);
+      ranges.forEach(r => {
+        denom += (r.to - r.from + 1);
+        for(let n = r.from; n <= r.to; n++){
+          if(state[`b${bi}-n${n}`]) checkedCount++;
+        }
+      });
     } else {
       denom = b.items.length;
       b.items.forEach((_, ii) => { if(state[`b${bi}-i${ii}`]) checkedCount++; });
@@ -861,14 +830,16 @@ function render(){
     if(b.type === "range"){
       const grid = document.createElement('div');
       grid.className = 'grid';
-      for(let n = b.from; n <= b.to; n++){
-        const key = `b${bi}-n${n}`;
-        const item = document.createElement('div');
-        item.className = 'item' + (state[key] ? ' checked' : '');
-        item.textContent = n;
-        item.onclick = () => { state[key] = !state[key]; render(); };
-        grid.appendChild(item);
-      }
+      getRangeList(b).forEach(r => {
+        for(let n = r.from; n <= r.to; n++){
+          const key = `b${bi}-n${n}`;
+          const item = document.createElement('div');
+          item.className = 'item' + (state[key] ? ' checked' : '');
+          item.textContent = n;
+          item.onclick = () => { state[key] = !state[key]; render(); };
+          grid.appendChild(item);
+        }
+      });
       blockEl.appendChild(grid);
     } else {
       const list = document.createElement('div');
